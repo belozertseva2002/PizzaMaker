@@ -4,7 +4,28 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>PizzaMaker</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
+    <div id="game-container">
+        <div id="board">
+            <img src="images/доска2.jpg" id="board-images">
+            <div id="dough">
+                <div id="dough-inner"></div>
+            </div>
+        </div>
+        <div id="rolling-pin">
+            <svg id="rolling-pin-svg" xmlns="http://www.w3.org/2000/svg" width="505" height="54">
+                <path id="svg_1" d="m424,22c0,-1.63014 1.36986,-3 3,-3l75,0c1.63014,0 3,1.36986 3,3l0,12c0,1.63014 -1.36986,3 -3,3l-75,0c-1.63014,0 -3,-1.36986 -3,-3l0,-12z"
+                opacity="undefined" stroke-width="0" stroke="#000" fill="#af7a48" />
+                <rect stroke="#000" stroke-width="0" rx="3" height="18" width="80" y="18.99998" x="0" fill="#af7a48" />
+                <image href="images/wood.jpg" rx="5" x="78.99999" y="0" width="346.00001" height="54" preserveAspectRatio="none" />
+            </svg>
+        </div>
+        <div id="menu">
+            <div id="sauce"></div>
+        </div>
+    </div>
+    <script src="script.js"></script>
 </body>
 </html>

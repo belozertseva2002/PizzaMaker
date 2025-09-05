@@ -1,0 +1,76 @@
+body, html {
+    margin: 0; 
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden; 
+}
+#game-container {
+    position: relative;
+    width: 100%;
+    height: 100vh; 
+    background-image: url('images/фон.jpg'); 
+    background-size: cover; 
+    background-position: center; 
+    background-repeat: no-repeat; 
+    overflow: hidden;
+}
+#board {
+    position: relative;
+    width: 460px;
+    height: 460px;
+    overflow: hidden;
+    top: 55px;
+    left: 150px;
+    border-radius: 50%;
+    box-shadow: 0 8px 12px rgba(0, 0, 0, 0.3);
+}
+#board-images {
+    position: relative;
+    height: 100%;
+    width: 100%;
+    object-fit: cover;
+}
+#dough {
+    position: absolute;
+    top: 50%; 
+    left: 50%; 
+    transform: translate(-50%, -50%); 
+    width: 200px;
+    height: 200px;
+    border-radius: 50%; 
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3); 
+    background-color: #f5e0a1;
+    transition: width 0.5s ease-out, height 0.5s ease-out; 
+}
+#dough-inner {
+    position: absolute;
+    background: radial-gradient(circle, #f5e0a1, #f5e2c5);
+    border-radius: 50%;
+}
+#rolling-pin {
+    position: absolute; 
+    width: 505px;
+    height: 54px;
+    left: 700px;
+    top: 200px;
+    cursor: grab; 
+    z-index: 3;
+    filter: drop-shadow(5px 5px 3px rgba(0, 0, 0, 0.5));
+}
+@keyframes rollAway {
+    from {
+        transform: translateY(0);
+        opacity: 1;
+    }
+    to {
+        transform: translateY(-100vh); /* Уезжает вверх за пределы видимости */
+        opacity: 0;
+    }
+}
+
+.rolling-pin-away {
+    animation: rollAway 2s ease-out forwards; /* Анимация длится 1 секунду */
+}
+
+
