@@ -42,11 +42,13 @@ body, html {
     box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3); 
     background-color: #f5e0a1;
     transition: width 0.5s ease-out, height 0.5s ease-out; 
+    overflow: hidden;
 }
 #dough-inner {
     position: absolute;
     background: radial-gradient(circle, #f5e0a1, #f5e2c5);
     border-radius: 50%;
+    overflow: hidden;
 }
 #rolling-pin {
     position: absolute; 
@@ -64,13 +66,49 @@ body, html {
         opacity: 1;
     }
     to {
-        transform: translateY(-100vh); /* Уезжает вверх за пределы видимости */
+        transform: translateY(-100vh); 
         opacity: 0;
     }
 }
 
 .rolling-pin-away {
-    animation: rollAway 2s ease-out forwards; /* Анимация длится 1 секунду */
+    animation: rollAway 2s ease-out forwards;
 }
 
+#clickMe {
+    position: absolute;
+    top: 60%;
+    left: 85%;
+    transform: translateY(-50%);
+    display: none;
+    align-items: center;
+    flex-direction: column;
+    cursor: pointer;
+    z-index: 1000;
+    filter: drop-shadow(5px 5px 3px rgba(0, 0, 0, 0.5));
+}
 
+#clickMe img {
+    margin-left: 43px;
+}
+
+.brush-cursor {
+    cursor: url('images/cursor.png') 10 40, auto;
+}
+
+.rotating-cursor {
+    cursor: url('images/cursorrotated.png') 0 80, auto;
+}
+
+#svgClickMe {
+    position: relative;
+    top: 10px;
+}
+.sauce {
+    position: absolute;
+    width: 60px;
+    height: 60px;
+    background-image: url(images/соус2.jpg);
+    background-size: cover;
+    pointer-events: none;  
+}

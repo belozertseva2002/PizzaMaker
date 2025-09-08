@@ -1,6 +1,8 @@
 const dough = document.getElementById('dough');
 const rollingPin = document.getElementById('rolling-pin');
 const doughInner = document.getElementById('dough-inner')
+const clickMe = document.getElementById('clickMe')
+const board = document.getElementById('board')
 
 let isRolling = false
 let targetDoughSize = 400;
@@ -66,7 +68,65 @@ function doughInnerMake() {
         doughInner.style.filter = 'drop-shadow(1px 2px 20px rgba(255, 255, 255, 0.77))'
     }
 }
+const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg')
 
 function rollingPinAway() {
    rollingPin.classList.add('rolling-pin-away')
+   setTimeout(() => {
+    clickMe.style.display = 'block'
+    svg.setAttribute('id', 'svgClickMe')
+    svg.setAttribute('width', 100)
+    svg.setAttribute('height', 80)
+    svg.setAttribute('viewBox', `0 0 100 80`)
+    clickMe.appendChild(svg)
+    const rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect')
+    rect.setAttribute('x', 0)
+    rect.setAttribute('y', 10)
+    rect.setAttribute('width', 90)
+    rect.setAttribute('height', 70)
+    rect.setAttribute('fill', '#fcf5bf')
+    rect.setAttribute('rx', 10)
+    rect.setAttribute('ry', 10)
+    svg.appendChild(rect)
+    const path = document.createElementNS('http://www.w3.org/2000/svg', 'path')
+    path.setAttribute('d', 'M 80 0 l -10 10 h 10 Z')   
+    path.setAttribute('fill', '#fcf5bf')
+    svg.appendChild(path)
+    const text = document.createElementNS('http://www.w3.org/2000/svg', 'text')
+    text.setAttribute('id', 'sauceSpeak')
+    text.setAttribute('x', 5)
+    text.setAttribute('y', 50)
+    text.setAttribute('font-size', 12)
+    text.setAttribute('fill', 'black')
+    text.setAttribute('font-family', 'Marker Felt, fantasy')
+    text.setAttribute('width', 10)
+    text.textContent = 'Нажми на меня!'
+    svg.appendChild(text)
+   }, 1000)
+}
+
+clickMe.addEventListener('click', () => {
+    document.body.classList.add('brush-cursor')
+    clickMe.style.cursor = "url('images/cursor.png') 5 10, auto"
+    dough.addEventListener('mouseover', applySauce)
+})
+
+
+function applySauce() {
+    dough.classList.add('rotating-cursor')
+    dough.addEventListener('mousemove', (e) => {
+        const text = document.getElementById('sauceSpeak')
+        text.style.display = 'none'
+        const rect = dough.getBoundingClientRect()
+        const x = e.clientX - rect.left - 50
+        const y = e.clientY - rect.top -20
+
+        const sauce = document.createElement('div')
+        sauce.classList.add('sauce')
+        sauce.style.left = `${x}px`
+        sauce.style.top = `${y}px`
+        doughInner.appendChild(sauce)
+        
+        
+    })
 }
