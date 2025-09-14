@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>PizzaMaker</title>
     <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
 </head>
 <body>
     <div id="game-container">
@@ -27,11 +28,25 @@
         </div>
         <div id="ingredients-menu" class="hidden">
             <div class="ingredient-group">
-                <h3>Сыры</h3>
-                <img src="" alt="cыр" data-ingredient="сыр">
+                <h3>ВЫБЕРИТЕ ИНГРЕДИЕНТЫ</h3>
+                <div id="plate-container">
+                    <img src="images/plate1.jpg" id="plate">
+                    <img src="images/сыр.png" alt="cыр" data-ingredient="сыр" id="cheese" class="ingredient-item">
+                    <img src="images/пеперони.png" alt="пеперони" data-ingredient="пеперони" id="peperoni" class="ingredient-item">
+                    <img src="images/ветчина.png" alt="ветчина" data-ingredient="ветчина" id="ham" class="ingredient-item">
+                    <img src="images/оливки.png" alt="оливки" data-ingredient="оливки" id="olive" class="ingredient-item">
+                    <img src="images/шампньоны.png" alt="грибы" data-ingredient="грибы" id="mushrooms" class="ingredient-item">
+                    <img src="images/помидор.png" alt="помидор" data-ingredient="помидор" id="tomato" class="ingredient-item">
+                    <img src="images/халапеньо.png" alt="халапеньо" data-ingredient="халапеньо" id="jalapeno" class="ingredient-item">
+                    <img src="images/огурец.png" alt="огурец" data-ingredient="огурец" id="cucumber" class="ingredient-item">
+                    <img src="images/ананас.png" alt="ананас" data-ingredient="ананас" id="pineapple" class="ingredient-item">
+                    <img src="images/лук.png" alt="лук" data-ingredient="лук" id="onion" class="ingredient-item">
+                    <img src="images/перец.png" alt="перец" data-ingredient="перец" id="pepper" class="ingredient-item">
+                    <img src="images/базилик.png" alt="базилик" data-ingredient="базилик" id="basil" class="ingredient-item">
+                </div>
             </div>
         </div>
     </div>
-    <script src="script.js"></script>
+    <script src="script.js" type="module"></script>
 </body>
 </html>

@@ -7,11 +7,12 @@ const board = document.getElementById('board')
 import Ingredient from "./modules/Ingredient.js";
 import Pizza from "./modules/Pizza.js";
 
+let sauceApllied = false
 let isRolling = false
 let targetDoughSize = 400;
 let doughInnerSize = 350
-let dragX, dragY;
-
+let dragX, dragY
+let handleMouseMove
 let originalFilter = rollingPin.style.filter
 let originalLeft = rollingPin.style.left
 let originalTop = rollingPin.style.top
@@ -54,7 +55,6 @@ function dragEnd(e) {
 }
 
 function rollDough() {
-    console.log('mouseover')
     rollingPin.style.filter = 'none'
     dough.style.width = targetDoughSize + 'px'
     dough.style.height = targetDoughSize + 'px'
@@ -129,24 +129,31 @@ clickMe.addEventListener('click', () => {
 
 
 function applySauce() {
-    dough.classList.add('rotating-cursor')
-    dough.addEventListener('mousemove', (e) => {
-        const oldText = document.getElementById('sauceSpeak')
-        oldText.style.display = 'none'
-        const rect = dough.getBoundingClientRect()
-        const x = e.clientX - rect.left - 50
-        const y = e.clientY - rect.top -20
-
-        const sauce = document.createElement('div')
-        sauce.classList.add('sauce')
-        sauce.style.left = `${x}px`
-        sauce.style.top = `${y}px`
-        doughInner.appendChild(sauce)  
-        if (!sauceQuestionShown) {
-            showSauceQuestion()
-            sauceQuestionShown = true
+    if (!sauceApllied) {
+        dough.classList.add('rotating-cursor')
+        handleMouseMove = (e) => {
+            const oldText = document.getElementById('sauceSpeak')
+            if (oldText) {
+                oldText.style.display = 'none'
+            }
+            const rect = dough.getBoundingClientRect()
+            const x = e.clientX - rect.left - 50
+            const y = e.clientY - rect.top -20
+            
+            const sauce = document.createElement('div')
+            sauce.classList.add('sauce')
+            sauce.style.left = `${x}px`
+            sauce.style.top = `${y}px`
+            doughInner.appendChild(sauce)  
+            if (!sauceQuestionShown) {
+                showSauceQuestion()
+                sauceQuestionShown = true
+                sauceApllied = true
+            }
         }
-    })
+        dough.addEventListener('mousemove', handleMouseMove)
+
+    }
 }
 
 function showSauceQuestion() {
@@ -207,15 +214,22 @@ function showSauceQuestion() {
     buttonText.textContent = 'Да';
     svg.appendChild(buttonText);
     yesButton.style.display = 'block'
-    yesButton.addEventListener('click', function() { yesButton.style.filter = 'none'; nextStage()})
+    yesButton.addEventListener('click', function() { yesButton.style.filter = 'none'; dough.removeEventListener('mouseover', applySauce); dough.removeEventListener('mousemove', handleMouseMove); showMenu()})
+}
+
+const ingredientsMenu = document.getElementById('ingredients-menu')
+function showMenu() {
+    svg.remove()
+    clickMe.style.display = 'none'
+    document.body.style.cursor = 'default'
+    dough.style.cursor = 'default'
+    ingredientsMenu.classList.add('visible')  
 }
 
 const pizza = new Pizza()
 doughInner.appendChild(pizza.getElement())
 
-function nextStage() {
-    svg.remove()
-    clickMe.style.display = 'none'
-    document.body.style.cursor = 'default'
-    dough.style.cursor = 'default'
-}
+const ingredients = [
+    new Ingredient('Сыр', 'images/')
+]
+
