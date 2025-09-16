@@ -309,3 +309,8 @@ body, html {
     filter: drop-shadow(10px 3px 5px rgba(0, 0, 0, 0.5));
     z-index: 10;
 }
+
+.ingredient {
+    position: absolute;
+    z-index: 100;
+}
