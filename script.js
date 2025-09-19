@@ -229,7 +229,9 @@ function showMenu() {
 
 const pizza = new Pizza()
 doughInner.appendChild(pizza.getElement())
-
+let draggableElementInfo = null
+let dragIngredientX
+let dragIngredientY
  const ingredientsData = {
         "сыр": {
             imageSrc: 'images/сырная стружка.png', 
@@ -237,59 +239,59 @@ doughInner.appendChild(pizza.getElement())
             menuImageSrc: 'images/сырная стружка.png' 
         },
         "пеперони": {
-            imageSrc: 'images/пеперони.png',
+            imageSrc: 'images/пепперони1.png',
             quantity: 7,
-            menuImageSrc: 'images/пеперони.png'
+            menuImageSrc: 'images/пепперони1.png'
         },
         "ветчина": {
-            imageSrc: 'images/ветчина.png',
+            imageSrc: 'images/ветчина1.png',
             quantity: 6,
-            menuImageSrc: 'images/ветчина.png'
+            menuImageSrc: 'images/ветчина1.png'
         },
         "оливки": {
-            imageSrc: 'images/оливки.png',
+            imageSrc: 'images/оливки1.png',
             quantity: 8,
-            menuImageSrc: 'images/оливки.png'
+            menuImageSrc: 'images/оливки1.png'
         },
         "грибы": {
-            imageSrc: 'images/грибы.png',
+            imageSrc: 'images/гриб1.png',
             quantity: 5,
-            menuImageSrc: 'images/грибы.png'
+            menuImageSrc: 'images/гриб1.png'
         },
         "помидор": {
-            imageSrc: 'images/помидор.png',
+            imageSrc: 'images/помидор1.png',
             quantity: 4,
-            menuImageSrc: 'images/помидор.png'
+            menuImageSrc: 'images/помидор1.png'
         },
         "халапеньо": {
-            imageSrc: 'images/халапеньо.png',
+            imageSrc: 'images/халапеньо1.png',
             quantity: 6,
-            menuImageSrc: 'images/халапеньо.png'
+            menuImageSrc: 'images/халапеньо1.png'
         },
         "огурец": {
-            imageSrc: 'images/огурец.png',
+            imageSrc: 'images/огурец1.png',
             quantity: 5,
-            menuImageSrc: 'images/огурец.png'
+            menuImageSrc: 'images/огурец1.png'
         },
         "ананас": {
-            imageSrc: 'images/ананас.png',
+            imageSrc: 'images/ананас1.png',
             quantity: 5,
-            menuImageSrc: 'images/ананас.png'
+            menuImageSrc: 'images/ананас1.png'
         },
         "лук": {
-            imageSrc: 'images/лук.png',
+            imageSrc: 'images/лук1.png',
             quantity: 5,
-            menuImageSrc: 'images/лук.png'
+            menuImageSrc: 'images/лук1.png'
         },
         "перец": {
-            imageSrc: 'images/перец.png',
+            imageSrc: 'images/перец1.png',
             quantity: 5,
-            menuImageSrc: 'images/перец.png'
+            menuImageSrc: 'images/перец1.png'
         },
         "базилик": {
-            imageSrc: 'images/базилик.png',
+            imageSrc: 'images/базилик1.png',
             quantity: 5,
-            menuImageSrc: 'images/базилик.png'
+            menuImageSrc: 'images/базилик1.png'
         }
     }
 function renderIngredientsMenu() {
@@ -303,44 +305,82 @@ function renderIngredientsMenu() {
             console.log(`нажали на ${ingredientName}`)
             const selectedIngredientData = ingredientsData[ingredientName]
             if (selectedIngredientData && selectedIngredientData.quantity > 0) {
-                selectedIngredientData.quantity--
                 const ingredientImageElement = document.createElement('img')
                 ingredientImageElement.src = selectedIngredientData.imageSrc
                 ingredientImageElement.alt = ingredientName
                 ingredientImageElement.classList.add('ingredient')
                 ingredientImageElement.setAttribute('data-ingredient-name', ingredientName)
                 doughInner.appendChild(ingredientImageElement)
-                console.log('видим на пицце')
+                ingredientImageElement.style.position = 'absolute'
+                ingredientImageElement.style.zIndex = '2'
+                ingredientImageElement.style.visibility = 'hidden'
+                ingredientImageElement.onload = () => {
+                    const ingredientWidth = ingredientImageElement.offsetWidth
+                    const ingredientHeight = ingredientImageElement.offsetHeight
+                    console.log(`Ширина ${ingredientName}: ${ingredientWidth}, Высота ${ingredientName}: ${ingredientHeight}`)
+                    const doughInnerRect = doughInner.getBoundingClientRect();
+                    const randomAngle = Math.floor(Math.random() * 225)- 45
+                    const centerX = (doughInnerRect.width - ingredientWidth) / 2
+                    const centerY = (doughInnerRect.height - ingredientHeight) / 2
+                    ingredientImageElement.style.left = `${centerX}px`;
+                    ingredientImageElement.style.top = `${centerY}px`;
+                    ingredientImageElement.style.transform = `rotate(${randomAngle}deg)`
+                    ingredientImageElement.style.visibility = 'visible'
+                    console.log('Картинка видна на пицце')
+
+                    let isDragging = false
+
+                    ingredientImageElement.addEventListener('mousedown', (e) => {
+                        e.preventDefault()
+                        isDragging = true;
+                        const rect = ingredientImageElement.getBoundingClientRect()
+                        const doughInnerRect = doughInner.getBoundingClientRect()
+                        dragIngredientX = e.clientX - rect.left
+                        dragIngredientY = e.clientY - rect.top
+                        console.log(`e.client:(${e.clientX}, ${e.clientY}) rect: (${rect.left}, ${rect.top}), dragIngredient: ${dragIngredientX},${dragIngredientY}`)
+                        ingredientImageElement.style.cursor = 'grabbing'
+                        ingredientImageElement.style.zIndex = '100'
+                        draggableElementInfo = {element: ingredientImageElement,  ingredientName: ingredientName}
+                       
+                    })
+                }
             }
         })
     })
 }
-   /* document.addEventListener('mousemove', (e) => {
-        if (draggableElementInfo) {
-            const {element, offset} = draggableElementInfo
-            
-            const doughRect = doughInner.getBoundingClientRect()
-            const ingredientWidth = ingredientImageElement.offsetWidth
-            const ingredientHeight = ingredientImageElement.offsetHeight
+document.addEventListener('mousemove', dragIngredient)
+document.addEventListener('mouseup', dragIngredientEnd)
 
-            let newX = e.clientX - doughRect.left - offset.x
-            let newY = e.clientY - doughRect.top - offset.y
+function dragIngredient(e) {
+    if (!draggableElementInfo) return
+    e.preventDefault()
+    const {element} = draggableElementInfo
+    const doughInnerRect = doughInner.getBoundingClientRect()//
+    const ingredientWidth = element.offsetWidth//
+    const ingredientHeight = element.offsetHeight//
+    let radius = doughInnerRect.width/2
+    let newX = (e.clientX - doughInnerRect.left)- dragIngredientX
+    let newY = (e.clientY - doughInnerRect.top) - dragIngredientY
+    if (newX < 0) newX = 0
+    if (newY < 0) newY = 0
+    if (newX + ingredientWidth > doughInnerRect.width) newX = doughInnerRect.width - ingredientWidth
+    if (newY + ingredientHeight > doughInnerRect.height) newY = doughInnerRect.height - ingredientHeight
+    console.log(`element: (${newX}, ${newY}), e.client:(${e.clientX}, ${e.clientY})`)
+    console.log(radius)
+    element.style.left = newX + 'px'; 
+    element.style.top = newY + 'px';
+}
 
-            if (newX < 0) newX = 0
-            if (newY < 0) newY = 0
-            if (newX + ingredientWidth > doughRect.width) newX = doughRect.width - ingredientWidth
-            if (newY + ingredientHeight > doughRect.height) newY = doughRect.height - ingredientHeight
-
-            element.style.left = `${newX}px`
-            element.style.top = `${newY}px`
-        }
-    })
-    document.addEventListener('mouseup', () => {
-        if (draggableElementInfo) {
-            const { element } = draggableElementInfo
-            element.style.cursor = 'grab'
-            doughInner.style.cursor = 'default'
-            element.style.zIndex = '2'
-            draggableElementInfo = null 
-        }
-    })*/
+function dragIngredientEnd(e) {
+    e.preventDefault()
+    if (draggableElementInfo) {
+        const {element} = draggableElementInfo
+        element.style.cursor = 'grab'
+        doughInner.style.cursor = 'default'
+        element.style.zIndex = '2'
+        draggableElementInfo = null
+        //document.removeEventListener('mousemove', dragIngredient)
+        //document.removeEventListener('mouseup', dragIngredientEnd)
+    }
+}
+   
