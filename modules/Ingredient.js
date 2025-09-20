@@ -1,11 +1,12 @@
 class Ingredient {
-    constructor(name, imageSrc, quantity) {
+    constructor(name, imageSrc, menuImageSrc) {
         this.name = name
         this.imageSrc = imageSrc
-        this.quantity = quantity
+        this.menuImageSrc = menuImageSrc
+
     }
 
-    addToPizza(pizzaElement) {
+   /* addToPizza(pizzaElement) {
         if (this.quantity > 0) {
             const ingredientElement = document.createElement('img')
             ingredientElement.src = this.imageSrc
@@ -16,7 +17,7 @@ class Ingredient {
         } else {
             console.log(`${this.name} закончился!`)
         }
-    }
+    }*/
 
     isAvailable() {
         return this.quantity >0

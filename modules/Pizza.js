@@ -1,33 +1,42 @@
 import Ingredient from "./Ingredient.js"
 
 class Pizza {
-    constructor() {
-        this.ingredients = []
+    constructor(element) {
+        this.pizzaIngredients = []
         this.isBaked = false
-        this.element = document.createElement('div')
+        this.element = element
         this.element.classList.add('pizza')
     }
 
     addIngredient(ingredient) {
-        if (ingredient instanceof Ingredient && ingredient.isAvailable()) {
-            this.ingredients.push(ingredient)
-            ingredient.addToPizza(this.element)
-        } else {
-            console.log('недоступный ингредиент!')
+        if (!ingredient) {
+            console.log('Ингредиент недоступен!')
+            return false
         }
+        const ingredientImageElement = document.createElement('img')
+        ingredientImageElement.src = ingredient.imageSrc
+        ingredientImageElement.alt = ingredient.name
+        ingredientImageElement.classList.add('ingredient')
+        ingredientImageElement.setAttribute('data-ingredient-name', ingredient.name)
+        const uniqueId = `ingredient-${Date.now()}-${Math.random().toString(36).substring(2, 15)}`
+        ingredientImageElement.id = uniqueId
+        ingredientImageElement.style.position = 'absolute'
+        ingredientImageElement.style.zIndex = '2'
+        ingredientImageElement.style.visibility = 'hidden'
+        this.element.appendChild(ingredientImageElement)
+        this.pizzaIngredients.push({
+            name: ingredient.name,
+            element: ingredientImageElement,
+            id: uniqueId
+        })
+        console.log(`Ингредиент "${ingredient.name}" добавлен на пиццу.`)
+        return ingredientImageElement
     }
 
-    bake() {
-        if (this.ingredients.lenght > 0) {
-            this.isBaked = true
-            console.log('Пицца готова!')
-        } else {
-            console.log('Пицца еще не готова. Добавьте ингредиенты!')
-        }
+    bake() { 
+        console.log('Пицца готова!')
+        this.isBaked = true  
     }
 
-    getElement() {
-        return this.element
-    }
 }
 export default Pizza

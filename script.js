@@ -227,125 +227,77 @@ function showMenu() {
     renderIngredientsMenu()  
 }
 
-const pizza = new Pizza()
-doughInner.appendChild(pizza.getElement())
+let pizza = new Pizza(doughInner)
 let draggableElementInfo = null
+const allIngredientMenuItems = document.querySelectorAll('.ingredient-item')
 let dragIngredientX
 let dragIngredientY
- const ingredientsData = {
-        "сыр": {
-            imageSrc: 'images/сырная стружка.png', 
-            quantity: 5,
-            menuImageSrc: 'images/сырная стружка.png' 
-        },
-        "пеперони": {
-            imageSrc: 'images/пепперони1.png',
-            quantity: 7,
-            menuImageSrc: 'images/пепперони1.png'
-        },
-        "ветчина": {
-            imageSrc: 'images/ветчина1.png',
-            quantity: 6,
-            menuImageSrc: 'images/ветчина1.png'
-        },
-        "оливки": {
-            imageSrc: 'images/оливки1.png',
-            quantity: 8,
-            menuImageSrc: 'images/оливки1.png'
-        },
-        "грибы": {
-            imageSrc: 'images/гриб1.png',
-            quantity: 5,
-            menuImageSrc: 'images/гриб1.png'
-        },
-        "помидор": {
-            imageSrc: 'images/помидор1.png',
-            quantity: 4,
-            menuImageSrc: 'images/помидор1.png'
-        },
-        "халапеньо": {
-            imageSrc: 'images/халапеньо1.png',
-            quantity: 6,
-            menuImageSrc: 'images/халапеньо1.png'
-        },
-        "огурец": {
-            imageSrc: 'images/огурец1.png',
-            quantity: 5,
-            menuImageSrc: 'images/огурец1.png'
-        },
-        "ананас": {
-            imageSrc: 'images/ананас1.png',
-            quantity: 5,
-            menuImageSrc: 'images/ананас1.png'
-        },
-        "лук": {
-            imageSrc: 'images/лук1.png',
-            quantity: 5,
-            menuImageSrc: 'images/лук1.png'
-        },
-        "перец": {
-            imageSrc: 'images/перец1.png',
-            quantity: 5,
-            menuImageSrc: 'images/перец1.png'
-        },
-        "базилик": {
-            imageSrc: 'images/базилик1.png',
-            quantity: 5,
-            menuImageSrc: 'images/базилик1.png'
-        }
+const ingredientsData = {
+        сыр: new Ingredient('сыр','images/сырная стружка.png', 'images/сыр.png'),
+        пепперони: new Ingredient('пепперони', 'images/пепперони1.png', 'images/пепперони.png'),
+        ветчина: new Ingredient('ветчина', 'images/ветчина1.png', 'images/ветчина.png'),
+        оливки: new Ingredient('оливки', 'images/оливки1.png', 'images/оливки.png'),
+        грибы: new Ingredient('грибы', 'images/гриб1.png', 'images/грибы.png'),
+        помидор: new Ingredient('помидор', 'images/помидор1.png', 'images/помидор.png'),
+        халапеньо: new Ingredient('халапеньо', 'images/халапеньо1.png', 'images/халапеньо.png'),
+        огурец: new Ingredient('огурец', 'images/огурец1.png', 'images/огурец.png'),
+        ананас: new Ingredient('ананас', 'images/ананас1.png', 'images/ананас.png'),
+        лук: new Ingredient('лук', 'images/лук1.png', 'images/лук.png'),
+        перец: new Ingredient('перец', 'images/перец1.png', 'images/перец.png'),
+        базилик: new Ingredient('базилик', 'images/базилик1.png', 'images/базилик.png')
     }
 function renderIngredientsMenu() {
-    const ingredientMenuItems = document.querySelectorAll('.ingredient-item');
-    const ingredientMenuItemsArray = Array.from(ingredientMenuItems);
-
+    const ingredientMenuItemsArray = Array.from(allIngredientMenuItems);
     console.log(`Найдено ${ingredientMenuItemsArray.length} элементов в меню при рендеринге.`)
     ingredientMenuItemsArray.forEach(item => {
         const ingredientName = item.dataset.ingredient
+        const ingredient = ingredientsData[ingredientName]
+        if (!ingredient) {
+            console.warm(`Ингредиент "${ingredientName}" найден в меню, но отсутствует в ingredientData.`)
+            return
+        }
         item.addEventListener('click', () => {
-            console.log(`нажали на ${ingredientName}`)
-            const selectedIngredientData = ingredientsData[ingredientName]
-            if (selectedIngredientData && selectedIngredientData.quantity > 0) {
-                const ingredientImageElement = document.createElement('img')
-                ingredientImageElement.src = selectedIngredientData.imageSrc
-                ingredientImageElement.alt = ingredientName
-                ingredientImageElement.classList.add('ingredient')
-                ingredientImageElement.setAttribute('data-ingredient-name', ingredientName)
-                doughInner.appendChild(ingredientImageElement)
-                ingredientImageElement.style.position = 'absolute'
-                ingredientImageElement.style.zIndex = '2'
-                ingredientImageElement.style.visibility = 'hidden'
-                ingredientImageElement.onload = () => {
+            if (ingredient) {
+                const ingredientImageElement = pizza.addIngredient(ingredient)
+                if (ingredientImageElement) {
+                    ingredientImageElement.onload = () => {
                     const ingredientWidth = ingredientImageElement.offsetWidth
                     const ingredientHeight = ingredientImageElement.offsetHeight
                     console.log(`Ширина ${ingredientName}: ${ingredientWidth}, Высота ${ingredientName}: ${ingredientHeight}`)
-                    const doughInnerRect = doughInner.getBoundingClientRect();
                     const randomAngle = Math.floor(Math.random() * 225)- 45
-                    const centerX = (doughInnerRect.width - ingredientWidth) / 2
-                    const centerY = (doughInnerRect.height - ingredientHeight) / 2
+                    const centerX = (doughInnerSize - ingredientWidth) / 2
+                    const centerY = (doughInnerSize - ingredientHeight) / 2
                     ingredientImageElement.style.left = `${centerX}px`;
                     ingredientImageElement.style.top = `${centerY}px`;
                     ingredientImageElement.style.transform = `rotate(${randomAngle}deg)`
                     ingredientImageElement.style.visibility = 'visible'
                     console.log('Картинка видна на пицце')
 
-                    let isDragging = false
-
-                    ingredientImageElement.addEventListener('mousedown', (e) => {
-                        e.preventDefault()
-                        isDragging = true;
-                        const rect = ingredientImageElement.getBoundingClientRect()
-                        const doughInnerRect = doughInner.getBoundingClientRect()
-                        dragIngredientX = e.clientX - rect.left
-                        dragIngredientY = e.clientY - rect.top
-                        console.log(`e.client:(${e.clientX}, ${e.clientY}) rect: (${rect.left}, ${rect.top}), dragIngredient: ${dragIngredientX},${dragIngredientY}`)
-                        ingredientImageElement.style.cursor = 'grabbing'
-                        ingredientImageElement.style.zIndex = '100'
-                        draggableElementInfo = {element: ingredientImageElement,  ingredientName: ingredientName}
-                       
-                    })
+                    setupIngredientDrag(ingredientImageElement, ingredientName)
                 }
+                ingredientImageElement.onerror = () => {
+                    console.error(`Не удалось загрузить изображение :${selectedIngredientData.imageSrc}`)
+                    ingredientImageElement.remove()
+                }
+ 
             }
-        })
+        }
+    })
+})
+}
+function setupIngredientDrag(ingredientImageElement, ingredientName) {
+    ingredientImageElement.addEventListener('mousedown', (e) => {
+        e.preventDefault()
+        ingredientImageElement.parentElement.appendChild(ingredientImageElement)
+        const rect = ingredientImageElement.getBoundingClientRect()
+        dragIngredientX = e.clientX - rect.left
+        dragIngredientY = e.clientY - rect.top
+        const offset = {x: dragIngredientX, y: dragIngredientY}
+        console.log(`e.client:(${e.clientX}, ${e.clientY}) rect: (${rect.left}, ${rect.top}), dragIngredient: ${dragIngredientX},${dragIngredientY}`)
+        ingredientImageElement.style.cursor = 'grabbing'
+        ingredientImageElement.style.zIndex = '100'
+        draggableElementInfo = {element: ingredientImageElement, offset: offset,  ingredientName: ingredientName}
+   
     })
 }
 document.addEventListener('mousemove', dragIngredient)
@@ -355,20 +307,46 @@ function dragIngredient(e) {
     if (!draggableElementInfo) return
     e.preventDefault()
     const {element} = draggableElementInfo
-    const doughInnerRect = doughInner.getBoundingClientRect()//
-    const ingredientWidth = element.offsetWidth//
-    const ingredientHeight = element.offsetHeight//
-    let radius = doughInnerRect.width/2
-    let newX = (e.clientX - doughInnerRect.left)- dragIngredientX
-    let newY = (e.clientY - doughInnerRect.top) - dragIngredientY
-    if (newX < 0) newX = 0
-    if (newY < 0) newY = 0
-    if (newX + ingredientWidth > doughInnerRect.width) newX = doughInnerRect.width - ingredientWidth
-    if (newY + ingredientHeight > doughInnerRect.height) newY = doughInnerRect.height - ingredientHeight
-    console.log(`element: (${newX}, ${newY}), e.client:(${e.clientX}, ${e.clientY})`)
-    console.log(radius)
-    element.style.left = newX + 'px'; 
-    element.style.top = newY + 'px';
+    const doughInnerRect = doughInner.getBoundingClientRect()
+    const ingredientWidth = element.offsetWidth
+    const ingredientHeight = element.offsetHeight
+    const centerPizza = doughInnerSize/2
+    const radius = doughInnerSize/2
+    const edgeOffset = 10
+    const ingredientMaxOffsetRadius = Math.sqrt((ingredientWidth / 2)**2 + (ingredientHeight / 2)**2)
+    const effectiveRadiusForCenter = radius + edgeOffset - ingredientMaxOffsetRadius
+    const mouseX_relativeToDoughInner = e.clientX- doughInnerRect.left
+    const mouseY_relativeToDoughInner = e.clientY - doughInnerRect.top
+    let potentialNewX = mouseX_relativeToDoughInner - dragIngredientX
+    let potentialNewY = mouseY_relativeToDoughInner - dragIngredientY
+    const ingredientCenterX_relativeToDoughInner = potentialNewX + ingredientWidth / 2;
+    const ingredientCenterY_relativeToDoughInner = potentialNewY + ingredientHeight / 2
+    const distanceToCenter = Math.sqrt(
+        (ingredientCenterX_relativeToDoughInner - centerPizza) ** 2 +
+        (ingredientCenterY_relativeToDoughInner - centerPizza) ** 2
+    )
+    let finalNewX = potentialNewX
+    let finalNewY = potentialNewY
+    if (distanceToCenter > Math.max(0, effectiveRadiusForCenter)) {
+        const angle = Math.atan2(
+            ingredientCenterY_relativeToDoughInner - centerPizza,
+            ingredientCenterX_relativeToDoughInner - centerPizza
+        );
+        const clampedCenterX_relativeToDoughInner = centerPizza + Math.max(0, effectiveRadiusForCenter) * Math.cos(angle);
+        const clampedCenterY_relativeToDoughInner = centerPizza + Math.max(0, effectiveRadiusForCenter) * Math.sin(angle)
+        finalNewX = clampedCenterX_relativeToDoughInner - ingredientWidth / 2;
+        finalNewY = clampedCenterY_relativeToDoughInner - ingredientHeight / 2
+    } else {
+        finalNewX = potentialNewX;
+        finalNewY = potentialNewY;
+    }
+    if (finalNewX < 0) finalNewX = 0
+    if (finalNewY < 0) finalNewY = 0
+    if (finalNewX + ingredientWidth > doughInnerSize) finalNewX = doughInnerSize - ingredientWidth
+    if (finalNewY + ingredientHeight > doughInnerSize) finalNewY = doughInnerSize - ingredientHeight
+    
+    element.style.left = finalNewX + 'px'; 
+    element.style.top = finalNewY + 'px';
 }
 
 function dragIngredientEnd(e) {
@@ -379,8 +357,6 @@ function dragIngredientEnd(e) {
         doughInner.style.cursor = 'default'
         element.style.zIndex = '2'
         draggableElementInfo = null
-        //document.removeEventListener('mousemove', dragIngredient)
-        //document.removeEventListener('mouseup', dragIngredientEnd)
     }
 }
    
