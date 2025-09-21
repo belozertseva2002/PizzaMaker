@@ -3,6 +3,7 @@ const rollingPin = document.getElementById('rolling-pin');
 const doughInner = document.getElementById('dough-inner')
 const clickMe = document.getElementById('clickMe')
 const board = document.getElementById('board')
+const gameContainer = document.getElementById('game-container')
 
 import Ingredient from "./modules/Ingredient.js";
 import Pizza from "./modules/Pizza.js";
@@ -225,6 +226,7 @@ function showMenu() {
     dough.style.cursor = 'default'
     ingredientsMenu.classList.add('visible')
     renderIngredientsMenu()  
+    showInfoPaper()
 }
 
 let pizza = new Pizza(doughInner)
@@ -272,7 +274,6 @@ function renderIngredientsMenu() {
                     ingredientImageElement.style.transform = `rotate(${randomAngle}deg)`
                     ingredientImageElement.style.visibility = 'visible'
                     console.log('Картинка видна на пицце')
-
                     setupIngredientDrag(ingredientImageElement, ingredientName)
                 }
                 ingredientImageElement.onerror = () => {
@@ -359,4 +360,23 @@ function dragIngredientEnd(e) {
         draggableElementInfo = null
     }
 }
-   
+
+function showInfoPaper() {
+    const paperInfo = document.createElement('div')
+    paperInfo.id = 'paper-info'
+    gameContainer.appendChild(paperInfo)
+    const textContainer = document.createElement('p')
+    textContainer.id = 'text-info'
+    const text = `Добавить ингредиент: Кликните на него в меню. Удалить ингредиент: Удерживайте его левой кнопкой мыши и нажмите Delete.`
+    paperInfo.appendChild(textContainer)
+    let i = 0;
+        const interval = setInterval(() => {
+            textContainer.textContent += text[i]
+            i++
+             if (i >= text.length) {
+            clearInterval(interval)
+            }
+        }, 60)
+    
+}
+
