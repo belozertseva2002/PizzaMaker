@@ -32,6 +32,18 @@ class Pizza {
         console.log(`Ингредиент "${ingredient.name}" добавлен на пиццу.`)
         return ingredientImageElement
     }
+    removeIngredient(elementToRemove) {
+        if (elementToRemove) {
+            elementToRemove.parentNode.removeChild(elementToRemove)
+            const index = this.pizzaIngredients.findIndex(item => item.element === elementToRemove)
+            if (index > -1) {
+            this.pizzaIngredients.splice(index, 1); 
+            console.log(`Ингредиент ${elementToRemove.id} удален из массива pizzaIngredients.`);
+        } else {
+            console.warn(`Ингредиент ${elementToRemove.id} не найден в массиве pizzaIngredients.`);
+        }
+        }
+    }
 
     bake() { 
         console.log('Пицца готова!')

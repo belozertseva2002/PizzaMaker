@@ -298,9 +298,17 @@ function setupIngredientDrag(ingredientImageElement, ingredientName) {
         ingredientImageElement.style.cursor = 'grabbing'
         ingredientImageElement.style.zIndex = '100'
         draggableElementInfo = {element: ingredientImageElement, offset: offset,  ingredientName: ingredientName}
-   
     })
 }
+document.addEventListener('keydown', (event) => {
+    if (!draggableElementInfo) return
+    const {element} = draggableElementInfo
+    if (event.key === 'Delete' && element) {
+        event.preventDefault()
+        pizza.removeIngredient(element)
+        console.log(`Ингредиент удален ${JSON.stringify(pizza.pizzaIngredients, null, 2)}`)
+    }
+})
 document.addEventListener('mousemove', dragIngredient)
 document.addEventListener('mouseup', dragIngredientEnd)
 
