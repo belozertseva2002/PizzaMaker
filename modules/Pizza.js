@@ -6,6 +6,7 @@ class Pizza {
         this.isBaked = false
         this.element = element
         this.element.classList.add('pizza')
+        this.newCheeseImg = 'images/расплавленныйсыр.png'
     }
 
     addIngredient(ingredient) {
@@ -46,7 +47,23 @@ class Pizza {
     }
 
     bake() { 
+        dough.style.backgroundColor = '#ffc65d'
+        const doughInner = document.getElementById('dough-inner')
+        doughInner.style.background = 'radial-gradient(circle, #fbc677ff, #ffc65d)'
+        this.pizzaIngredients.forEach(item => {
+            if (item.name === 'сыр' && item.element) {
+                const cheeseElement = item.element
+                const rect = item.element.getBoundingClientRect()
+                console.log(`${rect.left}, ${rect.top}`)
+                console.log(cheeseElement)
+                cheeseElement.src = this.newCheeseImg
+                cheeseElement.style.left = rect.left + 'px'
+                cheeseElement.style.top = rect.top + 'px'
+                
+            }
+        })
         console.log('Пицца готова!')
+        console.log(doughInner)
         this.isBaked = true  
     }
 

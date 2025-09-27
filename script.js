@@ -385,6 +385,409 @@ function showInfoPaper() {
             clearInterval(interval)
             }
         }, 60)
+     startAnimation('idle', 1500)
     
+}
+
+const canvasButton = document.getElementById('buttonBake')
+const ctx = canvasButton.getContext('2d')
+const buttonWidth = 120
+const buttonHeight = 170
+
+const colors = {
+    idleBase: '#A52A2A', 
+    idleMiddle: '#CD853F',  
+    idleInner: '#D2B48C',   
+    idleWhite: '#FFFFFF',
+
+    burningBase: '#FF4500',
+    burningMiddle: '#FFA500', 
+    burningInner: '#FFD700', 
+    burningWhite: '#FFFACD',
+
+    idleBaseBright: '#ff4400ff', 
+    idleMiddleBright: '#ffb01dff', 
+    idleInnerBright: '#ffff00ff',
+}
+
+let animationState = {
+    currentType: 'idle', 
+    startTime: 0,
+    duration: 1500,
+    isAnimating: false,
+    animationFrameId: null,
+    progress: 0,
+    scale: 1, 
+    offsetX: 0, offsetY: 0
+}
+const hexToRgb = hex => ({
+    r: parseInt(hex.substring(1, 3), 16),
+    g: parseInt(hex.substring(3, 5), 16),
+    b: parseInt(hex.substring(5, 7), 16)
+})
+const lerp = (a, b, t) => a + t * (b - a);
+const interpColor = (hex1, hex2, t) => {
+    const rgb1 = hexToRgb(hex1);
+    const rgb2 = hexToRgb(hex2);
+    return `rgb(${lerp(rgb1.r, rgb2.r, t)}, ${lerp(rgb1.g, rgb2.g, t)}, ${lerp(rgb1.b, rgb2.b, t)})`;
+}
+
+function drawBaseLayer(ctx, color, scale, shadowBlur) {
+    ctx.save()
+    ctx.translate(buttonWidth/2, buttonHeight/2)
+    ctx.scale(scale, scale)
+    ctx.translate(-buttonWidth/2, -buttonHeight/2)
+
+    ctx.fillStyle = color
+    ctx.shadowBlur = shadowBlur
+    ctx.shadowColor = 'rgba(255, 165, 0, 0.5)'
+    ctx.beginPath()
+    ctx.moveTo(90, 20)
+    ctx.quadraticCurveTo(40, 40, 35, 80)
+    ctx.quadraticCurveTo(30, 75, 25, 65)
+    ctx.quadraticCurveTo(10, 90, 15, 120)
+    ctx.quadraticCurveTo(10, 120, 5, 115)
+    ctx.quadraticCurveTo(8, 125, 15, 130)
+    ctx.quadraticCurveTo(70, 170, 115, 130)
+    ctx.quadraticCurveTo(117, 125, 120, 120)
+    ctx.quadraticCurveTo(112, 125, 107, 127)
+    ctx.bezierCurveTo(120, 95, 95, 90, 110, 70)
+    ctx.quadraticCurveTo(97, 75, 95, 85)
+    ctx.bezierCurveTo(105, 60, 75, 50, 90, 20)
+    ctx.fill()
+
+    ctx.restore()
+}
+function drawMiddleLayer(ctx, color, scale, shadowBlur) {
+    ctx.save()
+    ctx.translate(buttonWidth/2, buttonHeight/2)
+    ctx.scale(scale, scale)
+    ctx.translate(-buttonWidth/2, -buttonHeight/2)
+
+    ctx.fillStyle = color
+    ctx.shadowBlur = shadowBlur
+    ctx.shadowColor = 'rgba(255, 165, 0, 0.5)'
+
+    ctx.beginPath()
+    ctx.moveTo(75, 40)
+    ctx.quadraticCurveTo(45, 50, 37, 90)
+    ctx.quadraticCurveTo(33, 90, 30, 85)
+    ctx.quadraticCurveTo(20, 120, 56, 148)
+    ctx.quadraticCurveTo(70, 150, 85, 146)
+    ctx.bezierCurveTo(115, 125, 95, 105, 105, 90)
+    ctx.quadraticCurveTo(102, 90, 96, 98)
+    ctx.bezierCurveTo(96, 75, 70, 65, 75, 40)
+    ctx.fill()
+
+    ctx.restore()
+}
+function drawInnerLayer(ctx, color, scale, shadowBlur) {
+    ctx.save()
+    ctx.translate(buttonWidth/2, buttonHeight/2)
+    ctx.scale(scale, scale)
+    ctx.translate(-buttonWidth/2, -buttonHeight/2)
+
+    ctx.fillStyle = color
+    ctx.shadowBlur = shadowBlur
+    ctx.shadowColor = 'rgba(255, 165, 0, 0.5)'
+
+    ctx.beginPath()
+    ctx.moveTo(72, 55)
+    ctx.quadraticCurveTo(55, 75, 55, 103)
+    ctx.quadraticCurveTo(52, 100, 48, 95)
+    ctx.quadraticCurveTo(40, 125, 55, 148)
+    ctx.quadraticCurveTo(70, 150, 83, 146)
+    ctx.bezierCurveTo(107, 100, 60, 75, 72, 55)
+    ctx.fill()
+
+    ctx.restore()
+}
+function drawWhiteLayer(ctx, color, scale, shadowBlur) {
+    ctx.save()
+    ctx.translate(buttonWidth/2, buttonHeight/2)
+    ctx.scale(scale, scale)
+    ctx.translate(-buttonWidth/2, -buttonHeight/2)
+
+    ctx.fillStyle = color
+    ctx.shadowBlur = 2
+    ctx.shadowColor = 'rgba(255, 255, 255, 0.7)'
+
+    ctx.beginPath()
+    ctx.moveTo(70, 83)
+    ctx.quadraticCurveTo(55, 100, 60, 120)
+    ctx.quadraticCurveTo(52, 120, 50, 112)
+    ctx.quadraticCurveTo(40, 135, 63, 148)
+    ctx.quadraticCurveTo(75, 150, 84, 146)
+    ctx.bezierCurveTo(105, 115, 70, 113, 70, 83)
+    ctx.fill()
+
+    ctx.restore()
+}
+
+ function renderFrame(progress) {
+    const currentTime = performance.now()
+    ctx.clearRect(0, 0, buttonWidth, buttonHeight)
+    let currentBaseColor, currentMiddleColor, currentInnerColor, currentWhiteColor;
+    let currentScaleBase, currentScaleMiddle, currentScaleInner, currentScaleWhite;
+    let currentShadowBlurBase, currentShadowBlurMiddle, currentShadowBlurInner, currentShadowBlurWhite;
+
+    if (animationState.currentType === 'idle') {
+        const flickerProgress = (currentTime - animationState.startTime) / 1000; 
+        const flickerPhase = flickerProgress % 1;
+        const flickerIntensity = Math.sin(flickerPhase * Math.PI * 2) * 0.5 + 0.5; 
+
+        currentBaseColor = interpColor(colors.idleBase, colors.idleBaseBright, flickerIntensity); 
+        currentMiddleColor = interpColor(colors.idleMiddle, colors.idleMiddleBright, flickerIntensity);
+        currentInnerColor = interpColor(colors.idleInner, colors.idleInnerBright, flickerIntensity);
+        currentWhiteColor = colors.idleWhite;
+
+        currentScaleBase = 1 + flickerIntensity * 0.1;
+        currentScaleMiddle = 1 + flickerIntensity * 0.08;
+        currentScaleInner = 1 + flickerIntensity * 0.05;
+        currentScaleWhite = 1
+
+        currentShadowBlurBase = 10 + flickerIntensity * 5;
+        currentShadowBlurMiddle = 5 + flickerIntensity * 3;
+        currentShadowBlurInner = 2;
+        currentShadowBlurWhite = 0;
+    } else if (animationState.currentType === 'transition') {
+        const elapsedTime = currentTime - animationState.startTime;
+        const progress = Math.min(elapsedTime / animationState.duration, 1);
+
+        currentScaleBase = 1 + progress * 0.3; 
+        currentScaleMiddle = 1 + progress * 0.2;
+        currentScaleInner = 1 + progress * 0.1;
+        currentScaleWhite = 1 + progress * 0.05; 
+
+        currentBaseColor = interpColor(colors.idleBase, colors.burningBase, progress);
+        currentMiddleColor = interpColor(colors.idleMiddle, colors.burningMiddle, progress);
+        currentInnerColor = interpColor(colors.idleInner, colors.burningInner, progress);
+        currentWhiteColor = interpColor(colors.idleWhite, colors.burningWhite, progress)
+
+        currentShadowBlurBase = 15 + progress * 10;
+        currentShadowBlurMiddle = 10 + progress * 5;
+        currentShadowBlurInner = 5 + progress * 2;
+        currentShadowBlurWhite = 0;
+    } else if (animationState.currentType === 'burning') {
+        const elapsedTime = currentTime - animationState.startTime;
+        const progress = Math.min(elapsedTime / animationState.duration, 1);
+
+        currentScaleBase = 1.3; 
+        currentScaleMiddle = 1.2;
+        currentScaleInner = 1.1;
+        currentScaleWhite = 1.05;
+
+        currentBaseColor = colors.burningBase;
+        currentMiddleColor = colors.burningMiddle;
+        currentInnerColor = colors.burningInner;
+        currentWhiteColor = colors.burningWhite;
+
+        currentShadowBlurBase = 20;
+        currentShadowBlurMiddle = 15;
+        currentShadowBlurInner = 10;
+        currentShadowBlurWhite = 2;
+    }
+    else {
+        currentBaseColor = colors.idleBase;
+        currentMiddleColor = colors.idleMiddle;
+        currentInnerColor = colors.idleInner;
+        currentWhiteColor = colors.idleWhite;
+        currentScaleBase = 1; currentScaleMiddle = 1; currentScaleInner = 1; currentScaleWhite = 1
+        currentShadowBlurBase = 0; currentShadowBlurMiddle = 0; currentShadowBlurInner = 0; currentShadowBlurWhite = 0;
+    }
+    ctx.save();
+    ctx.translate(buttonWidth / 2, buttonHeight / 2);
+    ctx.scale(currentScaleBase, currentScaleBase); 
+    ctx.translate(-buttonWidth / 2, -buttonHeight / 2);
+
+    drawBaseLayer(ctx, currentBaseColor, currentScaleBase, currentShadowBlurBase);
+    drawMiddleLayer(ctx, currentMiddleColor, currentScaleMiddle, currentShadowBlurMiddle);
+    drawInnerLayer(ctx, currentInnerColor, currentScaleInner, currentShadowBlurInner);
+    drawWhiteLayer(ctx, currentWhiteColor, currentScaleWhite, currentShadowBlurWhite);
+
+    ctx.restore()
+ }
+let animationFrameId = null 
+function animate() {
+    renderFrame()
+
+    if (animationState.isAnimating) {
+        if (animationState.currentType === 'idle') {
+            animationFrameId = requestAnimationFrame(animate);
+        }
+        else {
+            const currentTime = performance.now();
+            const elapsedTime = currentTime - animationState.startTime;
+            const progress = Math.min(elapsedTime / animationState.duration, 1);
+
+            if (progress < 1) {
+                animationFrameId = requestAnimationFrame(animate)
+            } else {
+                animationState.isAnimating = false;
+                animationFrameId = null;
+                if (animationState.currentType === 'transition') {
+                    animationState.currentType = 'burning'; 
+                    startAnimation('burning', 500); 
+                } else if (animationState.currentType === 'burning') {
+                    startAnimation('idle', 1500); 
+                }
+            }
+        }
+    }
+}
+
+ function startAnimation(type, duration) {
+    animationState.currentType = type;
+    animationState.duration = duration;
+    animationState.startTime = performance.now();
+    animationState.isAnimating = true;
+    if (animationFrameId) {
+        cancelAnimationFrame(animationFrameId);
+    }
+    animationFrameId = requestAnimationFrame(animate)
+ }
+ let canvasBake
+ let patt
+ let ctxBake
+ 
+ canvasButton.addEventListener('click', () => {
+    ingredientsMenu.style.display = 'none'
+    const paperInfo = document.getElementById('paper-info')
+    paperInfo.style.display = 'none'
+    canvasButton.style.display = 'none'
+    console.log('Запуск анимации перехода!') 
+    const img = new Image()
+    img.onload = () => {
+        canvasBake = document.createElement('canvas')
+        canvasBake.id = 'canvas-bake'
+        canvasBake.width = 400
+        canvasBake.height = 580
+        ctxBake = canvasBake.getContext('2d')
+        document.body.appendChild(canvasBake)
+        patt = ctxBake.createPattern(img, 'repeat')
+        startBakeAnimation(3000)
+    }
+    img.src = 'images/печь.png'
+    dough.style.animation = 'movePizza 3s ease-in-out forwards'
+    setTimeout(pizzaBaked, 4000)
+})
+let glow = {
+    color: 'rgba(255, 119, 0, 0.34)',
+    x: 0,
+    y: 0, 
+    minRadius: 30,
+    maxRadius: 70,
+    minOpacity: 0.6,
+    maxOpacity: 0.9,
+    shadowColorStart: 'rgba(200, 0, 0, 1)',
+    shadowColorEnd: 'rgba(255, 102, 0, 1)',
+    animationStartTime: 0,
+    animationDuration: 1500,
+    shadowBlurMin: 10, 
+    shadowBlurMax: 50,
+}
+let bakeAnimationState = {
+    currentType: 'active',
+    startTime: 0,
+    duration: 3000,
+    isAnimating: false,
+    animationFrameId: null,
+}
+const lerpBake = (a, b, t) => a + t * (b - a)
+function parseRgba(rgbaString) {
+    const match = rgbaString.match(/^rgba?\((\d+),\s*(\d+),\s*(\d+)(?:,\s*([\d.]+))?\)$/);
+    if (match) {
+        const r = parseInt(match[1]);
+        const g = parseInt(match[2]);
+        const b = parseInt(match[3]);
+        const a = match[4] !== undefined ? parseFloat(match[4]) : 1;
+        return [r, g, b, a];
+    }
+    return null
+}
+
+function drawPulsatingGlow(ctx, glowColor, shadowColor, shadowBlur, opacity) {
+    if (opacity <= 0) return;
+    ctx.save()
+    ctx.globalAlpha = opacity
+    ctx.shadowColor = shadowColor
+    ctx.shadowBlur = shadowBlur
+    ctx.fillStyle = glowColor
+    ctx.beginPath()
+    ctx.moveTo(40, 140)
+    ctx.quadraticCurveTo(10, 290, 42, 440)
+    ctx.quadraticCurveTo(60, 290, 40, 140)
+    ctx.fill()
+    ctx.restore()
+    
+}
+function drawOvenShape(ctx, patt) {
+    ctx.fillStyle = patt
+    ctx.beginPath()
+    ctx.moveTo(20, 65)
+    ctx.quadraticCurveTo(70, 20, 140, 0)
+    ctx.lineTo(400, 0)
+    ctx.lineTo(400, 580)
+    ctx.lineTo(140, 580)
+    ctx.quadraticCurveTo(70, 560, 20, 520)
+    ctx.bezierCurveTo(60, 460, 60, 145, 20, 65)
+    ctx.fill()
+}
+
+let lastFrameTime = 0
+function renderFrameBake() {
+    const currentTime = performance.now();
+    const deltaTime = (currentTime - lastFrameTime) / 1000;
+    lastFrameTime = currentTime;
+
+    ctxBake.clearRect(0, 0, canvasBake.width, canvasBake.height);
+
+    let glowOpacity = 0;
+    let shadowBlur = glow.shadowBlurMin;
+    let shadowColor = glow.shadowColorStart; 
+    let currentGlowColor = glow.color
+
+    if (bakeAnimationState.isAnimating) {
+        const glowPhaseProgress = (currentTime - glow.animationStartTime) / glow.animationDuration;
+        const glowPhase = glowPhaseProgress % 1;
+        const intensity = Math.sin(glowPhase * Math.PI * 2) * 0.5 + 0.5; 
+
+        glowOpacity = glow.minOpacity + (glow.maxOpacity - glow.minOpacity) * intensity;
+        shadowBlur = glow.shadowBlurMin + (glow.shadowBlurMax - glow.shadowBlurMin) * intensity;
+
+        const startRgba = parseRgba(glow.shadowColorStart);
+        const endRgba = parseRgba(glow.shadowColorEnd);
+
+        let interpR = 0, interpG = 0, interpB = 0, interpAlpha = 0;
+
+        if (startRgba && endRgba) {
+            interpR = Math.floor(lerpBake(startRgba[0], endRgba[0], intensity));
+            interpG = Math.floor(lerpBake(startRgba[1], endRgba[1], intensity));
+            interpB = Math.floor(lerpBake(startRgba[2], endRgba[2], intensity));
+            interpAlpha = lerpBake(startRgba[3], endRgba[3], intensity); 
+            shadowColor = `rgba(${interpR}, ${interpG}, ${interpB}, ${interpAlpha})`;
+        }
+    }
+    drawOvenShape(ctxBake, patt)
+    drawPulsatingGlow(ctxBake, currentGlowColor, shadowColor, shadowBlur, glowOpacity)
+    if (bakeAnimationState.isAnimating) {
+        bakeAnimationState.animationFrameId = requestAnimationFrame(renderFrameBake)
+    }
+}
+function startBakeAnimation(duration) {
+    bakeAnimationState.startTime = performance.now()
+    bakeAnimationState.duration = duration
+    bakeAnimationState.isAnimating = true
+    glow.animationStartTime = performance.now()
+    if (bakeAnimationState.animationFrameId) {
+        cancelAnimationFrame(bakeAnimationState.animationFrameId)
+    }
+    bakeAnimationState.animationFrameId = requestAnimationFrame(renderFrameBake)
+}
+
+function pizzaBaked() {
+    pizza.bake()
+    dough.style.animation = 'comeBackPizza 3s ease-in-out forwards'
+
 }
 

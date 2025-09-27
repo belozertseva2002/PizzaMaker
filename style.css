@@ -19,12 +19,13 @@ body, html {
     position: relative;
     width: 460px;
     height: 460px;
-    overflow: hidden;
+   /* overflow: hidden;*/
     top: 55px;
     left: 110px;
     border-radius: 50%;
     box-shadow: 0 8px 12px rgba(0, 0, 0, 0.3);
 }
+
 #board-images {
     position: relative;
     height: 100%;
@@ -43,6 +44,25 @@ body, html {
     background-color: #f5e0a1;
     transition: width 0.5s ease-out, height 0.5s ease-out; 
     overflow: hidden;
+    opacity: 1;
+}
+@keyframes movePizza {
+    from {
+        transform: translate(-50%, -50%);
+        opacity: 1;
+    }
+    to {
+        transform: translate(620px, -50%);
+        opacity: 1;
+    }
+}
+@keyframes comeBackPizza {
+    from {
+        transform: translate(620px, -50%)
+    }
+    to {
+        transform: translate(-50%, -50%);
+    }
 }
 #dough-inner {
     position: absolute;
@@ -340,5 +360,18 @@ body, html {
     font-size: 20px;
     text-align: left;
     font-family: 'Courier New', Courier, monospace;
+}
+
+#buttonBake {
+    position: absolute;
+    bottom: 5px;
+    left:20px;
+}
+
+#canvas-bake {
+    position:absolute;
+    right: 0px;
+    top: 10px;
+    z-index: 10;
 }
  
