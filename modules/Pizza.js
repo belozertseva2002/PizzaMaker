@@ -28,7 +28,7 @@ class Pizza {
         this.pizzaIngredients.push({
             name: ingredient.name,
             element: ingredientImageElement,
-            id: uniqueId
+            id: uniqueId,
         })
         console.log(`Ингредиент "${ingredient.name}" добавлен на пиццу.`)
         return ingredientImageElement
@@ -53,17 +53,11 @@ class Pizza {
         this.pizzaIngredients.forEach(item => {
             if (item.name === 'сыр' && item.element) {
                 const cheeseElement = item.element
-                const rect = item.element.getBoundingClientRect()
-                console.log(`${rect.left}, ${rect.top}`)
-                console.log(cheeseElement)
                 cheeseElement.src = this.newCheeseImg
-                cheeseElement.style.left = rect.left + 'px'
-                cheeseElement.style.top = rect.top + 'px'
-                
             }
+            item.element.style.cursor = 'default'
         })
         console.log('Пицца готова!')
-        console.log(doughInner)
         this.isBaked = true  
     }
 

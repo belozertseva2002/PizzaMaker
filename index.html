@@ -9,10 +9,12 @@
 </head>
 <body>
     <div id="game-container">
-        <div id="board">
-            <img src="images/доска2.jpg" id="board-images" width="460" height="460">
-            <div id="dough">
-                <div id="dough-inner"></div>
+        <div id="pizza-container">
+            <div id="board">
+                <img src="images/доска2.jpg" id="board-images" width="460" height="460">
+                <div id="dough">
+                    <div id="dough-inner"></div>
+                </div>
             </div>
         </div>
         <div id="rolling-pin">
@@ -47,7 +49,11 @@
             </div>
         </div>
         <canvas id="buttonBake" width="120" height="170"></canvas>
+        <button id="save-button" type="button" title="Сохранить"></button>
+        <button id="sound-button" type="button" title="громкость"></button>
+        <button id="update-button" type="button" title="обновить"></button>
     </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <script src="script.js" type="module"></script>
 </body>
 </html>

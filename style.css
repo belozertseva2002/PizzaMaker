@@ -7,25 +7,44 @@ body, html {
 }
 #game-container {
     position: relative;
-    width: 100%;
+    width: 100vw;
     height: 100vh; 
-    background-image: url('images/фон.jpg'); 
+    background-image: url('images/фон4.png'); 
     background-size: cover; 
     background-position: center; 
     background-repeat: no-repeat; 
     overflow: hidden;
 }
+#pizza-container {
+    display: flex;
+    position: relative;
+    justify-content: center;
+    align-items: center;
+    left: 100px;
+    top: 50px;
+    width: 500px;
+    height:500px;
+    left: 100px;
+    top: 50px;
+}
 #board {
     position: relative;
     width: 460px;
     height: 460px;
-   /* overflow: hidden;*/
-    top: 55px;
-    left: 110px;
     border-radius: 50%;
     box-shadow: 0 8px 12px rgba(0, 0, 0, 0.3);
+    justify-content: center;
+    align-items: center;
+    display: flex; 
 }
-
+@keyframes toCenter {
+    from {
+        transform: translate(0);
+    }
+    to {
+        transform: translate(50%);
+    }
+}
 #board-images {
     position: relative;
     height: 100%;
@@ -34,34 +53,29 @@ body, html {
 }
 #dough {
     position: absolute;
-    top: 50%; 
-    left: 50%; 
-    transform: translate(-50%, -50%); 
     width: 200px;
     height: 200px;
     border-radius: 50%; 
     box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3); 
     background-color: #f5e0a1;
     transition: width 0.5s ease-out, height 0.5s ease-out; 
-    overflow: hidden;
-    opacity: 1;
 }
 @keyframes movePizza {
     from {
-        transform: translate(-50%, -50%);
+        transform: translate(0%, 0%);
         opacity: 1;
     }
     to {
-        transform: translate(620px, -50%);
+        transform: translate(800px, 0%);
         opacity: 1;
     }
 }
 @keyframes comeBackPizza {
     from {
-        transform: translate(620px, -50%)
+        transform: translate(800px, 0%)
     }
     to {
-        transform: translate(-50%, -50%);
+        transform: translate(0%, 0%);
     }
 }
 #dough-inner {
@@ -83,11 +97,9 @@ body, html {
 @keyframes rollAway {
     from {
         transform: translateY(0);
-        opacity: 1;
     }
     to {
         transform: translateY(-100vh); 
-        opacity: 0;
     }
 }
 
@@ -374,4 +386,71 @@ body, html {
     top: 10px;
     z-index: 10;
 }
- 
+
+@keyframes away {
+    from {
+        transform: translateX(0);
+    }
+    to {
+        transform: translate(100%);
+    }
+}
+
+#save-button {
+    position:absolute;
+    right: 315px;
+    top: 80px;
+    display: none;
+    background: url(images/загрузка2.png), radial-gradient(rgb(224, 224, 224) 25px, #dddddd 30%, #ffffff 50%);
+    background-size: cover;
+    width: 70px;
+    height: 70px;
+    border-radius: 50px;
+    border: 2px solid #929292;
+    border-top: none;
+    border-left: none;
+    border-right: none;
+    filter: drop-shadow(1px 2px 2px rgba(102, 102, 102, 0.5))
+}
+
+#save-button:active {
+    background: url(images/загрузка2.png), radial-gradient(rgb(255, 255, 255) 25px, #f0f0f0 30%, rgb(236, 236, 236) 50%);
+}
+
+#sound-button {
+    position:absolute;
+    left: 10px;
+    top: 20px;
+    background: url(images/звуквыкл.png), radial-gradient(rgb(224, 224, 224) 25px, #dddddd 30%, #ffffff 50%);
+    background-size: cover;
+    width: 70px;
+    height: 70px;
+    border-radius: 50px;
+    border: 2px solid #929292;
+    border-top: none;
+    border-left: none;
+    border-right: none;
+    filter: drop-shadow(1px 2px 2px rgba(102, 102, 102, 0.5))
+}
+#sound-button:active {
+    background: url(images/выключить\ звук.png), radial-gradient(rgb(255, 255, 255) 25px, #f0f0f0 30%, rgb(236, 236, 236) 50%);
+}
+#update-button {
+    position:absolute;
+    display: none;
+    top: 300px;
+    right: 315px;
+    background: url(images/обновить1.png), radial-gradient(rgb(224, 224, 224) 25px, #dddddd 30%, #ffffff 50%);
+    background-size: cover;
+    width: 70px;
+    height: 70px;
+    border-radius: 50px;
+    border: 2px solid #929292;
+    border-top: none;
+    border-left: none;
+    border-right: none;
+    filter: drop-shadow(1px 2px 2px rgba(102, 102, 102, 0.5))
+}
+ #update-button:active {
+    background: url(images/обновить1.png), radial-gradient(rgb(255, 255, 255) 25px, #f0f0f0 30%, rgb(236, 236, 236) 50%);
+}

@@ -248,11 +248,14 @@ const ingredientsData = {
         перец: new Ingredient('перец', 'images/перец1.png', 'images/перец.png'),
         базилик: new Ingredient('базилик', 'images/базилик1.png', 'images/базилик.png')
     }
+
+let ingredientImageElement
+let ingredientName
 function renderIngredientsMenu() {
     const ingredientMenuItemsArray = Array.from(allIngredientMenuItems);
     console.log(`Найдено ${ingredientMenuItemsArray.length} элементов в меню при рендеринге.`)
     ingredientMenuItemsArray.forEach(item => {
-        const ingredientName = item.dataset.ingredient
+        ingredientName = item.dataset.ingredient
         const ingredient = ingredientsData[ingredientName]
         if (!ingredient) {
             console.warm(`Ингредиент "${ingredientName}" найден в меню, но отсутствует в ingredientData.`)
@@ -260,35 +263,38 @@ function renderIngredientsMenu() {
         }
         item.addEventListener('click', () => {
             if (ingredient) {
-                const ingredientImageElement = pizza.addIngredient(ingredient)
+                    ingredientImageElement = pizza.addIngredient(ingredient)
+                    ingredientImageElement.addEventListener('mousedown', startDrag)
                 if (ingredientImageElement) {
-                    ingredientImageElement.onload = () => {
-                    const ingredientWidth = ingredientImageElement.offsetWidth
-                    const ingredientHeight = ingredientImageElement.offsetHeight
-                    console.log(`Ширина ${ingredientName}: ${ingredientWidth}, Высота ${ingredientName}: ${ingredientHeight}`)
-                    const randomAngle = Math.floor(Math.random() * 225)- 45
-                    const centerX = (doughInnerSize - ingredientWidth) / 2
-                    const centerY = (doughInnerSize - ingredientHeight) / 2
-                    ingredientImageElement.style.left = `${centerX}px`;
-                    ingredientImageElement.style.top = `${centerY}px`;
-                    ingredientImageElement.style.transform = `rotate(${randomAngle}deg)`
-                    ingredientImageElement.style.visibility = 'visible'
-                    console.log('Картинка видна на пицце')
-                    setupIngredientDrag(ingredientImageElement, ingredientName)
+                    const onLoadHandler = () => {
+                        const ingredientWidth = ingredientImageElement.offsetWidth
+                        const ingredientHeight = ingredientImageElement.offsetHeight
+                        console.log(`Ширина ${ingredientName}: ${ingredientWidth}, Высота ${ingredientName}: ${ingredientHeight}`)
+                        const randomAngle = Math.floor(Math.random() * 225)- 45
+                        const centerX = (doughInnerSize - ingredientWidth) / 2
+                        const centerY = (doughInnerSize - ingredientHeight) / 2
+                        ingredientImageElement.style.left = `${centerX}px`;
+                        ingredientImageElement.style.top = `${centerY}px`;
+                        ingredientImageElement.style.transform = `rotate(${randomAngle}deg)`
+                        ingredientImageElement.style.visibility = 'visible'
+                        console.log('Картинка видна на пицце')
+                        ingredientImageElement.removeEventListener('load', onLoadHandler)
                 }
                 ingredientImageElement.onerror = () => {
                     console.error(`Не удалось загрузить изображение :${selectedIngredientData.imageSrc}`)
                     ingredientImageElement.remove()
                 }
- 
+                ingredientImageElement.addEventListener('load', onLoadHandler)
             }
         }
     })
 })
 }
-function setupIngredientDrag(ingredientImageElement, ingredientName) {
-    ingredientImageElement.addEventListener('mousedown', (e) => {
+//function setupIngredientDrag(ingredientImageElement, ingredientName) {
+    const startDrag = (e) => {
         e.preventDefault()
+        if (pizza.isBaked === true) return
+        ingredientImageElement = e.target
         ingredientImageElement.parentElement.appendChild(ingredientImageElement)
         const rect = ingredientImageElement.getBoundingClientRect()
         dragIngredientX = e.clientX - rect.left
@@ -298,8 +304,9 @@ function setupIngredientDrag(ingredientImageElement, ingredientName) {
         ingredientImageElement.style.cursor = 'grabbing'
         ingredientImageElement.style.zIndex = '100'
         draggableElementInfo = {element: ingredientImageElement, offset: offset,  ingredientName: ingredientName}
-    })
-}
+        //ingredientImageElement.removeEventListener('mousedown', startDrag)
+    }
+//}
 document.addEventListener('keydown', (event) => {
     if (!draggableElementInfo) return
     const {element} = draggableElementInfo
@@ -655,6 +662,8 @@ function animate() {
     const paperInfo = document.getElementById('paper-info')
     paperInfo.style.display = 'none'
     canvasButton.style.display = 'none'
+    document.removeEventListener('mousemove', dragIngredient)
+    document.removeEventListener('mouseup', dragIngredientEnd)
     console.log('Запуск анимации перехода!') 
     const img = new Image()
     img.onload = () => {
@@ -784,10 +793,73 @@ function startBakeAnimation(duration) {
     }
     bakeAnimationState.animationFrameId = requestAnimationFrame(renderFrameBake)
 }
-
+const saveButton = document.getElementById('save-button')
+const updateButton = document.getElementById('update-button')
+const pizzaContainer = document.getElementById('pizza-container')
 function pizzaBaked() {
     pizza.bake()
     dough.style.animation = 'comeBackPizza 3s ease-in-out forwards'
-
+    setTimeout(() => {
+        canvasBake.style.animation = 'away 3s ease-out forwards'
+        board.style.animation = 'toCenter 2s ease-out forwards'
+    }, 3000)
+    setTimeout(() => {
+        canvasBake.style.display = 'none'
+        saveButton.style.display = 'block'
+        updateButton.style.display = 'block'
+    }, 6000) 
 }
 
+function captureScreenshot(elementToCapture, filename = 'screenshot'){
+    return new Promise((resolve, reject) => {
+        html2canvas(elementToCapture, {
+            allowTaint: true, 
+            useCORS: true     
+        }).then(canvas => {
+            resolve(canvas); 
+        }).catch(error => {
+            console.error("Ошибка при создании скриншота:", error);
+            reject(error);
+        });
+    });
+}
+function exportCanvasAsFile(canvas, filename = 'screenshot', fileType = 'image/png') {
+    return new Promise((resolve, reject) => {
+        try {
+            const dataURL = canvas.toDataURL(fileType);
+            const link = document.createElement('a');
+            link.download = `${filename}.${fileType.split('/')[1]}`;
+            link.href = dataURL;
+            link.click();
+            resolve(); 
+        } catch (error) {
+            reject(error)
+        }
+    });
+}
+saveButton.addEventListener('click', async () => {
+    try {
+        if (!pizzaContainer || !board || !saveButton) {
+            throw new Error("Не найдены необходимые DOM-элементы (pizza-container, board, save-button).");
+        }
+        const canvas = await html2canvas(dough, {
+            scale: 2,
+            useCORS: true,
+            allowTaint: true,
+            logging: true,
+            ignoreElements: (element) => element.id === 'save-button' || element.tagName === 'BUTTON'
+        })
+        const croppedCanvas = document.createElement('canvas');
+        croppedCanvas.width = 798
+        croppedCanvas.height = 798
+        const context = croppedCanvas.getContext('2d')    
+        context.drawImage(canvas, 0, 0, croppedCanvas.width, croppedCanvas.height, 0, 0, croppedCanvas.width, croppedCanvas.height)           
+        console.log("Экспортируем скриншот...");
+        await exportCanvasAsFile(croppedCanvas, `pizza-${Date.now()}`, 'image/png');
+        console.log("Пицца успешно сохранена!");
+        alert("Ваша пицца сохранена! 🍕");
+    } catch {
+        console.error("Не удалось сохранить пиццу:", error);
+        alert("Произошла ошибка при сохранении пиццы. Попробуйте еще раз.")
+    }
+})
