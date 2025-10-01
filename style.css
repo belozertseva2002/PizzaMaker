@@ -15,27 +15,18 @@ body, html {
     background-repeat: no-repeat; 
     overflow: hidden;
 }
-#pizza-container {
-    display: flex;
-    position: relative;
-    justify-content: center;
-    align-items: center;
-    left: 100px;
-    top: 50px;
-    width: 500px;
-    height:500px;
-    left: 100px;
-    top: 50px;
-}
+
 #board {
     position: relative;
-    width: 460px;
-    height: 460px;
+    left: 10%;
+    top:10%;
+    width: 35vw;
+    height: auto;
     border-radius: 50%;
     box-shadow: 0 8px 12px rgba(0, 0, 0, 0.3);
     justify-content: center;
     align-items: center;
-    display: flex; 
+    display: flex;
 }
 @keyframes toCenter {
     from {
@@ -53,8 +44,8 @@ body, html {
 }
 #dough {
     position: absolute;
-    width: 200px;
-    height: 200px;
+    width: 17vw;
+    height: 24vh;
     border-radius: 50%; 
     box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3); 
     background-color: #f5e0a1;
@@ -88,11 +79,14 @@ body, html {
     position: absolute; 
     width: 505px;
     height: 54px;
-    left: 700px;
-    top: 200px;
+    left: 56vw;
+    top: 30%;
     cursor: grab; 
     z-index: 3;
     filter: drop-shadow(5px 5px 3px rgba(0, 0, 0, 0.5));
+}
+#rolling-pin-svg {
+    position: relative;
 }
 @keyframes rollAway {
     from {
@@ -139,8 +133,8 @@ body, html {
 }
 .sauce {
     position: absolute;
-    width: 60px;
-    height: 60px;
+    width: 6vw;
+    height: 6vw;
     background-image: url(images/соус2.jpg);
     background-size: cover;
     pointer-events: none;  
@@ -153,10 +147,10 @@ body, html {
 #ingredients-menu {
     position: absolute;
     top: 50%;
-    right: -400px; 
+    right: -30vw; 
     transform: translateY(-50%);
-    width: 400px;
-    height: 80%;
+    width: 30vw;
+    height: 80vh;
     background-image: url(images/меню.jpg);
     background-size: cover;
     box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
@@ -170,22 +164,22 @@ body, html {
 }
 #plate-container {
     position: relative;
-    width: 300px;
-    height: 300px;
-    top: 20px;
+    width: 28vw;
+    height: 28vw;
+    top: 3vh;
 }
 
 #plate {
     position: relative;
-    width: 300px;
-    height: 300px;
-    top: 20px;
-    left:50px;
+    width: 26vw;
+    height: 26vw;
+    top: 2vh;
+    left: 2vw;
 }
 
 #ingredients-menu h3 {
     font-family: 'Montserrat', sans-serif;
-    font-size: 26px;
+    font-size: 1.8vw;
     color: #ffffffea;
     height: auto;
     margin-top: 26px;
@@ -196,10 +190,10 @@ body, html {
 
 #cheese {
     position: absolute;
-    width: 88px;
-    height: 72px;
-    right: 94px;
-    top:46px;
+    width: 7vw;
+    height: 6vw;
+    right: 13vw;
+    top:3vw;
     cursor: pointer;
     transition: transform 0.2s ease;
     filter: drop-shadow(1px 2px 2px rgba(0, 0, 0, 0.5));
@@ -207,10 +201,10 @@ body, html {
 
 #peperoni {
     position: absolute;
-    width: 93px;
-    height: 68px;
-    right: 0px;
-    top:54px;
+    width: 7vw;
+    height: 5vw;
+    right: 6vw;
+    top:3vw;
     cursor: pointer;
     transition: transform 0.2s ease;
     filter: drop-shadow(1px 2px 2px rgba(0, 0, 0, 0.5));
@@ -218,20 +212,20 @@ body, html {
 
 #ham {
     position: absolute;
-    width: 58px;
-    height: 51px;
-    right: 166px;
-    top:119px;
+    width: 6vw;
+    height: 6vw;
+    right: 18vw;
+    top: 9vw;
     cursor: pointer;
     transition: transform 0.2s ease;
     filter: drop-shadow(1px 2px 2px rgba(0, 0, 0, 0.5));
 }
 #olive {
     position: absolute;
-    width: 70px;
-    height: 70px;
-    right: 149px;
-    top:180px;
+    width: 5vw;
+    height: 5vw;
+    right: 19vw;
+    top:15.5vw;
     cursor: pointer;
     transition: transform 0.2s ease;
     filter: drop-shadow(1px 2px 2px rgba(0, 0, 0, 0.5));
@@ -239,10 +233,10 @@ body, html {
 
 #mushrooms {
     position: absolute;
-    width: 75px;
-    height: 51px;
-    right: 88px;
-    top:117px;
+    width: 6vw;
+    height: 4vw;
+    right: 11vw;
+    top:9vw;
     cursor: pointer;
     transition: transform 0.2s ease;
     filter: drop-shadow(1px 2px 2px rgba(0, 0, 0, 0.5));
@@ -250,30 +244,30 @@ body, html {
 
 #tomato {
     position: absolute;
-    width: 60px;
-    height: 56px;
-    right: 35px;
-    top:130px;
+    width: 6vw;
+    height: 6vw;
+    right: 3vw;
+    top:7vw;
     cursor: pointer;
     transition: transform 0.2s ease;
     filter: drop-shadow(1px 2px 2px rgba(0, 0, 0, 0.5));
 }
 #jalapeno {
     position: absolute;
-    width: 94px;
-    height: 54px;
-    right: 1px;
-    top:220px;
+    width: 8vw;
+    height: 4vw;
+    right: 4vw;
+    top:20vw;
     cursor: pointer;
     transition: transform 0.2s ease;
     filter: drop-shadow(1px 2px 2px rgba(0, 0, 0, 0.5));
 }
 #cucumber {
     position: absolute;
-    width: 113px;
-    height: 30px;
-    right: 42px;
-    top:252px;
+    width: 10vw;
+    height: 2.5vw;
+    right: 8vw;
+    top:22vw;
     cursor: pointer;
     transform: rotate(45deg);
     transition: transform 0.2s ease;
@@ -286,42 +280,40 @@ body, html {
 }
 #pineapple {
     position: absolute;
-    width: 68px;
-    height: 56px;
-    right: 74px;
-    top:170px;
+    width: 6vw;
+    height: 5vw;
+    right: 12vw;
+    top:14vw;
     cursor: pointer;
     transition: transform 0.2s ease;
     filter: drop-shadow(1px 2px 2px rgba(0, 0, 0, 0.5));
 }
 #onion {
     position: absolute;
-    width: 72px;
-    height: 51px;
-    right: 0px;
-    left: 266px;
-    top:113px;
+    width: 6vw;
+    height: 4vw;
+    right: 7vw;
+    top:13vw;
     cursor: pointer;
     transition: transform 0.2s ease;
     filter: drop-shadow(1px 2px 2px rgba(0, 0, 0, 0.5));
 }
 #pepper {
     position: absolute;
-    width: 78px;
-    height: 61px;
-    right: 0px;
-    top:169px;
-    left: 253px;
+    width: 7vw;
+    height: 5vw;
+    right: 0vw;
+    top: 14vw;
     cursor: pointer;
     transition: transform 0.2s ease;
     filter: drop-shadow(1px 2px 2px rgba(0, 0, 0, 0.5));
 }
 #basil {
     position: absolute;
-    width: 62px;
-    height: 40px;
-    right: 122px;
-    top:245px;
+    width: 5vw;
+    height: 3vw;
+    right: 16vw;
+    top:20vw;
     cursor: pointer;
     transition: transform 0.2s ease;
     filter: drop-shadow(1px 2px 2px rgba(0, 0, 0, 0.5));
@@ -344,11 +336,11 @@ body, html {
 
 #paper-info {
     position: absolute;
-    width: 200px;
-    height: 300px;
+    width: 15vw;
+    height: 20vw;
     background-image: url(images/тетрадь.png);
     background-size: cover ;
-    left:621px;
+    left:49%;
     top:0px;
     border-radius: 10px;
     filter: drop-shadow(2px 6px 5px rgba(102, 102, 102, 0.5));
@@ -368,8 +360,8 @@ body, html {
     top:0px;
     left: 16px;
     display: block;
-    width: 180px;
-    font-size: 20px;
+    width: 12vw;
+    font-size: 1.2vw;
     text-align: left;
     font-family: 'Courier New', Courier, monospace;
 }
@@ -453,4 +445,27 @@ body, html {
 }
  #update-button:active {
     background: url(images/обновить1.png), radial-gradient(rgb(255, 255, 255) 25px, #f0f0f0 30%, rgb(236, 236, 236) 50%);
+}
+
+@media (max-width: 932px) {
+    #game-container {
+        width: 100%;
+        height: auto;
+    }
+    #board {
+        top: 0%;
+        left: 0%;
+    }
+    #rolling-pin {
+        left: 40%;
+    }
+    
+    #clickMe {
+        left: 80%;
+        top: 45%;
+    }
+    #paper-info {
+        left: 40%;
+    }
+
 }

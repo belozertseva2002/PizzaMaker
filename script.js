@@ -4,14 +4,15 @@ const doughInner = document.getElementById('dough-inner')
 const clickMe = document.getElementById('clickMe')
 const board = document.getElementById('board')
 const gameContainer = document.getElementById('game-container')
+const screenWidth = window.innerWidth
 
 import Ingredient from "./modules/Ingredient.js";
 import Pizza from "./modules/Pizza.js";
 
 let sauceApllied = false
 let isRolling = false
-let targetDoughSize = 400;
-let doughInnerSize = 350
+let targetDoughSize = 30;
+let doughInnerSize = 27
 let dragX, dragY
 let handleMouseMove
 let originalFilter = rollingPin.style.filter
@@ -19,25 +20,44 @@ let originalLeft = rollingPin.style.left
 let originalTop = rollingPin.style.top
 
 rollingPin.addEventListener('mousedown', rollerDragStart);
+rollingPin.addEventListener('touchstart', rollerDragStart)
 
 function rollerDragStart(e) {
     const rect = rollingPin.getBoundingClientRect()
-    dragX = e.clientX - rect.left; 
-    dragY = e.clientY - rect.top;
+    if (e.type === 'touchstart') {
+        dragX = e.touches[0].clientX - rect.left
+        dragY = e.touches[0].clientY - rect.top
+        console.log('touchstart')
+    } else {
+        dragX = e.clientX - rect.left; 
+        dragY = e.clientY - rect.top;
+    }
     rollingPin.style.zIndex = '1000'; 
     rollingPin.style.cursor = 'grabbing'; 
     rollingPin.style.filter = 'drop-shadow(10px 10px 10px rgba(0, 0, 0, 0.5))'
     e.preventDefault();
     window.addEventListener('mousemove', rollerDrag); 
-    window.addEventListener('mouseup', dragEnd); 
+    window.addEventListener('touchmove', rollerDrag)
+    window.addEventListener('mouseup', dragEnd);
+    window.addEventListener('touchend', dragEnd) 
 }
 
 function rollerDrag(e) {
-    e.preventDefault();
-    const newX = e.clientX - dragX; 
-    const newY = e.clientY - dragY; 
-    rollingPin.style.left = newX + 'px'; 
-    rollingPin.style.top = newY + 'px';
+    if (e.type === 'touchmove') {
+        const newX = e.touches[0].clientX - dragX
+        const newY = e.touches[0].clientY - dragY
+        rollingPin.style.left = newX + 'px'; 
+        rollingPin.style.top = newY + 'px';
+        if (newX > -30 && newX < 80 && newY > 60 && newY < 230) {
+            rollDough()
+        }
+    } else {
+        const newX = e.clientX - dragX; 
+        const newY = e.clientY - dragY; 
+        rollingPin.style.left = newX + 'px'; 
+        rollingPin.style.top = newY + 'px';
+    }
+    
     dough.addEventListener('mouseover', rollDough)
 }
 
@@ -48,27 +68,32 @@ function dragEnd(e) {
     rollingPin.style.top = originalTop
     rollingPin.style.filter = originalFilter
     window.removeEventListener('mousemove', rollerDrag); 
+    window.removeEventListener('touchmove', rollerDrag)
     window.removeEventListener('mouseup', dragEnd);
+    window.removeEventListener('touchend', dragEnd)
     dough.removeEventListener('mouseover', rollDough)
     if (isRolling) {
+        rollingPin.removeEventListener('mousedown', rollerDragStart)
+        rollingPin.removeEventListener('touchstart', rollerDragStart)
         rollingPinAway()
     }
 }
 
 function rollDough() {
     rollingPin.style.filter = 'none'
-    dough.style.width = targetDoughSize + 'px'
-    dough.style.height = targetDoughSize + 'px'
+    dough.style.width = targetDoughSize + 'vw'
+    dough.style.height = targetDoughSize + 'vw'
     isRolling = true
     setTimeout(doughInnerMake, 500)
 }
 
 function doughInnerMake() {
     if (isRolling) {
-        doughInner.style.left = '25px'
-        doughInner.style.top = '25px'
-        doughInner.style.width = doughInnerSize + 'px'
-        doughInner.style.height = doughInnerSize + 'px'
+            doughInner.style.left = '1.5vw'
+            doughInner.style.top = '1.5vw'
+            doughInner.style.width = doughInnerSize + 'vw'
+            doughInner.style.height = doughInnerSize + 'vw'
+        
         doughInner.style.filter = 'drop-shadow(1px 2px 20px rgba(255, 255, 255, 0.77))'
     }
 }
@@ -122,10 +147,11 @@ function rollingPinAway() {
    }, 1000)
 }
 
-clickMe.addEventListener('click', () => {
+clickMe.addEventListener('click', (e) => {
     document.body.classList.add('brush-cursor')
     clickMe.style.cursor = "url('images/cursor.png') 5 10, auto"
     dough.addEventListener('mouseover', applySauce)
+    dough.addEventListener('touchstart', applySauce)
 })
 
 
@@ -137,9 +163,16 @@ function applySauce() {
             if (oldText) {
                 oldText.style.display = 'none'
             }
+            let x, y
             const rect = dough.getBoundingClientRect()
-            const x = e.clientX - rect.left - 50
-            const y = e.clientY - rect.top -20
+            if (screenWidth <= 932 && e.type === 'touchmove') {
+                x = e.touches[0].clientX - rect.left- 50
+                y = e.touches[0].clientY - rect.top - 20
+                console.log(`x:${x}, y:${y}, ${e.touches[0].clientX}, ${e.touches[0].clientY}`)
+            } else {
+                x = e.clientX - rect.left - 50
+                y = e.clientY - rect.top - 20
+            }
             
             const sauce = document.createElement('div')
             sauce.classList.add('sauce')
@@ -153,6 +186,7 @@ function applySauce() {
             }
         }
         dough.addEventListener('mousemove', handleMouseMove)
+        dough.addEventListener('touchmove', handleMouseMove)
 
     }
 }
@@ -215,7 +249,7 @@ function showSauceQuestion() {
     buttonText.textContent = 'Да';
     svg.appendChild(buttonText);
     yesButton.style.display = 'block'
-    yesButton.addEventListener('click', function() { yesButton.style.filter = 'none'; dough.removeEventListener('mouseover', applySauce); dough.removeEventListener('mousemove', handleMouseMove); showMenu()})
+    yesButton.addEventListener('click', function() { yesButton.style.filter = 'none'; dough.removeEventListener('mouseover', applySauce);dough.removeEventListener('touchstart', applySauce); dough.removeEventListener('mousemove', handleMouseMove);dough.removeEventListener('touchmove',handleMouseMove); showMenu()})
 }
 
 const ingredientsMenu = document.getElementById('ingredients-menu')
@@ -262,17 +296,19 @@ function renderIngredientsMenu() {
             return
         }
         item.addEventListener('click', () => {
+            console.log('кликнули на ингредиент')
             if (ingredient) {
                     ingredientImageElement = pizza.addIngredient(ingredient)
                     ingredientImageElement.addEventListener('mousedown', startDrag)
+                    ingredientImageElement.addEventListener('touchstart', startDrag)
                 if (ingredientImageElement) {
                     const onLoadHandler = () => {
                         const ingredientWidth = ingredientImageElement.offsetWidth
                         const ingredientHeight = ingredientImageElement.offsetHeight
                         console.log(`Ширина ${ingredientName}: ${ingredientWidth}, Высота ${ingredientName}: ${ingredientHeight}`)
                         const randomAngle = Math.floor(Math.random() * 225)- 45
-                        const centerX = (doughInnerSize - ingredientWidth) / 2
-                        const centerY = (doughInnerSize - ingredientHeight) / 2
+                        const centerX = (doughInner.offsetWidth - ingredientWidth) / 2
+                        const centerY = (doughInner.offsetHeight - ingredientHeight) / 2
                         ingredientImageElement.style.left = `${centerX}px`;
                         ingredientImageElement.style.top = `${centerY}px`;
                         ingredientImageElement.style.transform = `rotate(${randomAngle}deg)`
@@ -297,16 +333,23 @@ function renderIngredientsMenu() {
         ingredientImageElement = e.target
         ingredientImageElement.parentElement.appendChild(ingredientImageElement)
         const rect = ingredientImageElement.getBoundingClientRect()
-        dragIngredientX = e.clientX - rect.left
-        dragIngredientY = e.clientY - rect.top
+        if (e.type === 'touchstart') {
+            dragIngredientX = e.touches[0].clientX - rect.left
+            dragIngredientY = e.touches[0].clientY - rect.top
+            console.log('touch')
+        } else {
+            dragIngredientX = e.clientX - rect.left
+            dragIngredientY = e.clientY - rect.top
+        }
         const offset = {x: dragIngredientX, y: dragIngredientY}
         console.log(`e.client:(${e.clientX}, ${e.clientY}) rect: (${rect.left}, ${rect.top}), dragIngredient: ${dragIngredientX},${dragIngredientY}`)
         ingredientImageElement.style.cursor = 'grabbing'
         ingredientImageElement.style.zIndex = '100'
         draggableElementInfo = {element: ingredientImageElement, offset: offset,  ingredientName: ingredientName}
-        //ingredientImageElement.removeEventListener('mousedown', startDrag)
+        document.addEventListener('touchend', dragIngredientEnd)
+        
     }
-//}
+
 document.addEventListener('keydown', (event) => {
     if (!draggableElementInfo) return
     const {element} = draggableElementInfo
@@ -317,22 +360,30 @@ document.addEventListener('keydown', (event) => {
     }
 })
 document.addEventListener('mousemove', dragIngredient)
+document.addEventListener('touchmove', dragIngredient)
 document.addEventListener('mouseup', dragIngredientEnd)
 
 function dragIngredient(e) {
     if (!draggableElementInfo) return
-    e.preventDefault()
+   // e.preventDefault()
+    console.log('touchmove')
     const {element} = draggableElementInfo
     const doughInnerRect = doughInner.getBoundingClientRect()
     const ingredientWidth = element.offsetWidth
     const ingredientHeight = element.offsetHeight
-    const centerPizza = doughInnerSize/2
-    const radius = doughInnerSize/2
+    const centerPizza = doughInner.offsetWidth/2
+    const radius = centerPizza
     const edgeOffset = 10
     const ingredientMaxOffsetRadius = Math.sqrt((ingredientWidth / 2)**2 + (ingredientHeight / 2)**2)
     const effectiveRadiusForCenter = radius + edgeOffset - ingredientMaxOffsetRadius
-    const mouseX_relativeToDoughInner = e.clientX- doughInnerRect.left
-    const mouseY_relativeToDoughInner = e.clientY - doughInnerRect.top
+    let mouseX_relativeToDoughInner, mouseY_relativeToDoughInner 
+    if (e.type === 'touchmove') {
+        mouseX_relativeToDoughInner = e.touches[0].clientX - doughInnerRect.left
+        mouseY_relativeToDoughInner = e.touches[0].clientY - doughInnerRect.top
+    } else {
+        mouseX_relativeToDoughInner = e.clientX - doughInnerRect.left
+        mouseY_relativeToDoughInner = e.clientY - doughInnerRect.top
+    }
     let potentialNewX = mouseX_relativeToDoughInner - dragIngredientX
     let potentialNewY = mouseY_relativeToDoughInner - dragIngredientY
     const ingredientCenterX_relativeToDoughInner = potentialNewX + ingredientWidth / 2;
@@ -358,9 +409,9 @@ function dragIngredient(e) {
     }
     if (finalNewX < 0) finalNewX = 0
     if (finalNewY < 0) finalNewY = 0
-    if (finalNewX + ingredientWidth > doughInnerSize) finalNewX = doughInnerSize - ingredientWidth
-    if (finalNewY + ingredientHeight > doughInnerSize) finalNewY = doughInnerSize - ingredientHeight
-    
+    if (finalNewX + ingredientWidth > doughInner.offsetWidth) finalNewX = doughInner.offsetWidth - ingredientWidth
+    if (finalNewY + ingredientHeight > doughInner.offsetHeight) finalNewY = doughInner.offsetHeight - ingredientHeight
+    console.log(finalNewX, finalNewY)
     element.style.left = finalNewX + 'px'; 
     element.style.top = finalNewY + 'px';
 }
@@ -795,7 +846,6 @@ function startBakeAnimation(duration) {
 }
 const saveButton = document.getElementById('save-button')
 const updateButton = document.getElementById('update-button')
-const pizzaContainer = document.getElementById('pizza-container')
 function pizzaBaked() {
     pizza.bake()
     dough.style.animation = 'comeBackPizza 3s ease-in-out forwards'
@@ -839,7 +889,7 @@ function exportCanvasAsFile(canvas, filename = 'screenshot', fileType = 'image/p
 }
 saveButton.addEventListener('click', async () => {
     try {
-        if (!pizzaContainer || !board || !saveButton) {
+        if (!board || !saveButton) {
             throw new Error("Не найдены необходимые DOM-элементы (pizza-container, board, save-button).");
         }
         const canvas = await html2canvas(dough, {

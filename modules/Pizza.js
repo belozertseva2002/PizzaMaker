@@ -17,6 +17,7 @@ class Pizza {
         const ingredientImageElement = document.createElement('img')
         ingredientImageElement.src = ingredient.imageSrc
         ingredientImageElement.alt = ingredient.name
+        console.log(ingredientImageElement.alt)
         ingredientImageElement.classList.add('ingredient')
         ingredientImageElement.setAttribute('data-ingredient-name', ingredient.name)
         const uniqueId = `ingredient-${Date.now()}-${Math.random().toString(36).substring(2, 15)}`
@@ -24,6 +25,19 @@ class Pizza {
         ingredientImageElement.style.position = 'absolute'
         ingredientImageElement.style.zIndex = '2'
         ingredientImageElement.style.visibility = 'hidden'
+        if (ingredientImageElement.alt === 'грибы' || ingredientImageElement.alt === 'пепперони' || ingredientImageElement.alt === 'халапеньо' || ingredientImageElement.alt === 'огурец' || ingredientImageElement.alt === 'лук') {
+            ingredientImageElement.style.width = '4vw'
+            ingredientImageElement.style.height = 'auto'
+        } else if (ingredientImageElement.alt === 'оливки') {
+            ingredientImageElement.style.width ='1.5vw'
+            ingredientImageElement.style.height = 'auto'
+        } else if (ingredientImageElement.alt === 'ананас' || ingredientImageElement.alt === 'базилик') {
+            ingredientImageElement.style.width ='6vw'
+            ingredientImageElement.style.height = 'auto'
+        } else {
+            ingredientImageElement.style.width ='8vw'
+            ingredientImageElement.style.height = 'auto'
+        }
         this.element.appendChild(ingredientImageElement)
         this.pizzaIngredients.push({
             name: ingredient.name,
