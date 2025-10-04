@@ -5,6 +5,12 @@ body, html {
     height: 100%;
     overflow: hidden; 
 }
+#check-orientation {
+    display: none;
+    width: 100vw;
+    height: 100vh;
+    background: url(images/ориентация.gif) no-repeat center center, #9292923f;
+}
 #game-container {
     position: relative;
     width: 100vw;
@@ -45,7 +51,7 @@ body, html {
 #dough {
     position: absolute;
     width: 17vw;
-    height: 24vh;
+    height: 15vw;
     border-radius: 50%; 
     box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3); 
     background-color: #f5e0a1;
@@ -57,13 +63,13 @@ body, html {
         opacity: 1;
     }
     to {
-        transform: translate(800px, 0%);
+        transform: translate(70vw, 0%);
         opacity: 1;
     }
 }
 @keyframes comeBackPizza {
     from {
-        transform: translate(800px, 0%)
+        transform: translate(70vw, 0%)
     }
     to {
         transform: translate(0%, 0%);
@@ -77,34 +83,29 @@ body, html {
 }
 #rolling-pin {
     position: absolute; 
-    width: 505px;
-    height: 54px;
     left: 56vw;
-    top: 30%;
+    top: 17vw;
     cursor: grab; 
     z-index: 3;
     filter: drop-shadow(5px 5px 3px rgba(0, 0, 0, 0.5));
 }
-#rolling-pin-svg {
-    position: relative;
-}
 @keyframes rollAway {
     from {
-        transform: translateY(0);
+        transform:  translate(0, 0);
     }
     to {
-        transform: translateY(-100vh); 
+        transform:  translate(0, -200vh); 
     }
 }
 
-.rolling-pin-away {
-    animation: rollAway 2s ease-out forwards;
+#rolling-pin-svg {
+    position: relative;
 }
 
 #clickMe {
     position: absolute;
-    top: 60%;
-    left: 85%;
+    top: 20vw;
+    left: 85vw;
     transform: translateY(-50%);
     display: none;
     align-items: center;
@@ -115,6 +116,8 @@ body, html {
 }
 
 #clickMe img {
+    width: 6vw;
+    height: 6vw;
     margin-left: 43px;
 }
 
@@ -128,8 +131,8 @@ body, html {
 
 #svgClickMe {
     position: absolute;
-    top: 114px;
-    right: 50px;
+    top: 6vw;
+    right: 5vw;
 }
 .sauce {
     position: absolute;
@@ -374,6 +377,8 @@ body, html {
 
 #canvas-bake {
     position:absolute;
+    width: 30vw;
+    height: auto;
     right: 0px;
     top: 10px;
     z-index: 10;
@@ -381,91 +386,123 @@ body, html {
 
 @keyframes away {
     from {
-        transform: translateX(0);
+        transform: translate(0);
     }
     to {
         transform: translate(100%);
     }
 }
 
+.btn {
+    width: 6vw;
+    height: 4vw;
+    border-radius: 60px;
+    font-size: 1.5vw;
+    border: none;
+    position:absolute;
+    cursor: pointer;
+    overflow: hidden;
+    z-index: 1;
+    box-shadow: 6px 6px 12px #c5c5c5,
+    -6px -6px 12px #ffffff;
+    background-color: #fff2cb;
+}
+.btn::before {
+    content: '';
+    width: 0;
+    height: 4vw;
+    border-radius: 60px;
+    position: absolute;
+    top: 0;
+    left: 0;
+    background-image: linear-gradient(to right, rgb(255, 198, 93) 0%, rgb(255, 234, 195) 100% );
+    transition: .5s ease;
+    z-index: -1;
+}
+.btn:hover::before {
+    width: 6vw;
+}
 #save-button {
-    position:absolute;
-    right: 315px;
-    top: 80px;
     display: none;
-    background: url(images/загрузка2.png), radial-gradient(rgb(224, 224, 224) 25px, #dddddd 30%, #ffffff 50%);
-    background-size: cover;
-    width: 70px;
-    height: 70px;
-    border-radius: 50px;
-    border: 2px solid #929292;
-    border-top: none;
-    border-left: none;
-    border-right: none;
-    filter: drop-shadow(1px 2px 2px rgba(102, 102, 102, 0.5))
+    right: 28vw;
+    top: 9vw;
 }
-
-#save-button:active {
-    background: url(images/загрузка2.png), radial-gradient(rgb(255, 255, 255) 25px, #f0f0f0 30%, rgb(236, 236, 236) 50%);
-}
-
 #sound-button {
-    position:absolute;
-    left: 10px;
-    top: 20px;
-    background: url(images/звуквыкл.png), radial-gradient(rgb(224, 224, 224) 25px, #dddddd 30%, #ffffff 50%);
-    background-size: cover;
-    width: 70px;
-    height: 70px;
-    border-radius: 50px;
-    border: 2px solid #929292;
-    border-top: none;
-    border-left: none;
-    border-right: none;
-    filter: drop-shadow(1px 2px 2px rgba(102, 102, 102, 0.5))
-}
-#sound-button:active {
-    background: url(images/выключить\ звук.png), radial-gradient(rgb(255, 255, 255) 25px, #f0f0f0 30%, rgb(236, 236, 236) 50%);
+    left: 1vw;
+    top: 1vw;
 }
 #update-button {
-    position:absolute;
     display: none;
-    top: 300px;
-    right: 315px;
-    background: url(images/обновить1.png), radial-gradient(rgb(224, 224, 224) 25px, #dddddd 30%, #ffffff 50%);
-    background-size: cover;
-    width: 70px;
-    height: 70px;
-    border-radius: 50px;
-    border: 2px solid #929292;
-    border-top: none;
-    border-left: none;
-    border-right: none;
-    filter: drop-shadow(1px 2px 2px rgba(102, 102, 102, 0.5))
+    top: 30vw;
+    right: 28vw;
 }
- #update-button:active {
-    background: url(images/обновить1.png), radial-gradient(rgb(255, 255, 255) 25px, #f0f0f0 30%, rgb(236, 236, 236) 50%);
-}
+
 
 @media (max-width: 932px) {
-    #game-container {
-        width: 100%;
-        height: auto;
-    }
     #board {
-        top: 0%;
-        left: 0%;
+        top: 2%;
+        left: 10%;
     }
     #rolling-pin {
-        left: 40%;
+        filter: none;
+        left: 43vw;
     }
-    
     #clickMe {
-        left: 80%;
-        top: 45%;
+        filter: none;
     }
     #paper-info {
-        left: 40%;
+        filter: none;
+        box-shadow: 6px 4px 8px #51515165;
     }
-
+    
+    #cheese:hover,
+    #peperoni:hover,
+    #ham:hover,
+    #olive:hover,
+    #mushrooms:hover,
+    #tomato:hover,
+    #jalapeno:hover,
+    #pineapple:hover,
+    #onion:hover,
+    #pepper:hover,
+    #basil:hover,
+    #cucumber:hover {
+        transform: none;
+        filter: none;
+        z-index: 10;
+    }
+    #cheese,
+    #peperoni,
+    #ham,
+    #olive,
+    #mushrooms,
+    #tomato,
+    #jalapeno,
+    #pineapple,
+    #onion,
+    #pepper,
+    #basil, 
+    #cucumber {
+        filter: none;
+    }
+    #cucumber {
+        transform: rotate(45deg)
+    }
+    #cucumber:hover {
+        transform: rotate(45deg);
+    }
+    #buttonBake {
+        transform: scale(0.5);
+        left: 1vw;
+        top: 19vw;
+    }
+    #canvas-bake {
+        top: -2vw;
+    }
+    #update-button {
+        top: 26vw;
+    }
+    #save-button {
+        top: 6vw;
+    }
 }

@@ -8,6 +8,7 @@ const screenWidth = window.innerWidth
 
 import Ingredient from "./modules/Ingredient.js";
 import Pizza from "./modules/Pizza.js";
+import { soundManager } from "./modules/SoundManager.js";
 
 let sauceApllied = false
 let isRolling = false
@@ -18,47 +19,63 @@ let handleMouseMove
 let originalFilter = rollingPin.style.filter
 let originalLeft = rollingPin.style.left
 let originalTop = rollingPin.style.top
+const scalePin = dough.offsetWidth*0.005
+rollingPin.style.transform = `scale(${scalePin})`
 
+async function initializeGame() {
+    await soundManager.loadSound('/music/Del Rio Bravo.mp3', 'fon');
+    await soundManager.loadSound('/music/скалка.m4a', 'скалка');
+    await soundManager.loadSound('/music/кликсоус.m4a', 'кликсоус');
+    await soundManager.loadSound('/music/соуснапицце.m4a', 'соуснапицце');
+    await soundManager.loadSound('/music/кнопка.m4a', 'кнопка');
+    await soundManager.loadSound('/music/keyboard.m4a', 'text')
+    await soundManager.loadSound('/music/ингредиенты.m4a', 'ingredient')
+    await soundManager.loadSound('/music/печь.m4a', 'bake')
+    await soundManager.loadSound('/music/delete.m4a', 'delete')
+    console.log('Аудио готово')
+}
+initializeGame()
 rollingPin.addEventListener('mousedown', rollerDragStart);
 rollingPin.addEventListener('touchstart', rollerDragStart)
 
 function rollerDragStart(e) {
-    const rect = rollingPin.getBoundingClientRect()
+    soundManager.playMusic('fon', 0.1)
     if (e.type === 'touchstart') {
-        dragX = e.touches[0].clientX - rect.left
-        dragY = e.touches[0].clientY - rect.top
+        dragX = e.touches[0].clientX - rollingPin.offsetLeft
+        dragY = e.touches[0].clientY - rollingPin.offsetTop
         console.log('touchstart')
+        e.preventDefault()
     } else {
-        dragX = e.clientX - rect.left; 
-        dragY = e.clientY - rect.top;
+        dragX = e.clientX - rollingPin.offsetLeft
+        dragY = e.clientY - rollingPin.offsetTop
+        rollingPin.style.filter = 'drop-shadow(10px 10px 10px rgba(0, 0, 0, 0.5))'
     }
     rollingPin.style.zIndex = '1000'; 
     rollingPin.style.cursor = 'grabbing'; 
-    rollingPin.style.filter = 'drop-shadow(10px 10px 10px rgba(0, 0, 0, 0.5))'
-    e.preventDefault();
+
     window.addEventListener('mousemove', rollerDrag); 
     window.addEventListener('touchmove', rollerDrag)
     window.addEventListener('mouseup', dragEnd);
     window.addEventListener('touchend', dragEnd) 
 }
-
+let newX, newY
 function rollerDrag(e) {
     if (e.type === 'touchmove') {
-        const newX = e.touches[0].clientX - dragX
-        const newY = e.touches[0].clientY - dragY
+        newX = e.touches[0].clientX - dragX
+        newY = e.touches[0].clientY - dragY
         rollingPin.style.left = newX + 'px'; 
         rollingPin.style.top = newY + 'px';
         if (newX > -30 && newX < 80 && newY > 60 && newY < 230) {
-            rollDough()
+            rollDough(e)
         }
     } else {
-        const newX = e.clientX - dragX; 
-        const newY = e.clientY - dragY; 
+        newX = e.clientX - dragX; 
+        newY = e.clientY - dragY; 
         rollingPin.style.left = newX + 'px'; 
         rollingPin.style.top = newY + 'px';
+        dough.addEventListener('mouseover', rollDough)
     }
     
-    dough.addEventListener('mouseover', rollDough)
 }
 
 function dragEnd(e) {
@@ -67,6 +84,7 @@ function dragEnd(e) {
     rollingPin.style.left = originalLeft
     rollingPin.style.top = originalTop
     rollingPin.style.filter = originalFilter
+    rollingPin.style.transform = `scale(${scalePin})`
     window.removeEventListener('mousemove', rollerDrag); 
     window.removeEventListener('touchmove', rollerDrag)
     window.removeEventListener('mouseup', dragEnd);
@@ -79,12 +97,21 @@ function dragEnd(e) {
     }
 }
 
-function rollDough() {
+let count = 1
+function rollDough(e) {
+    if (e.type === 'touchmove' && count === 1) {
+        console.log('touchmove'+ count)
+        soundManager.playSound('скалка', 0.8, false)
+    } else if (e.type === 'mouseover') {
+        console.log('комп')
+        soundManager.playSound('скалка', 0.8, false)
+    }
     rollingPin.style.filter = 'none'
     dough.style.width = targetDoughSize + 'vw'
     dough.style.height = targetDoughSize + 'vw'
     isRolling = true
     setTimeout(doughInnerMake, 500)
+    count++
 }
 
 function doughInnerMake() {
@@ -105,7 +132,13 @@ const sauceThreshold = 100
 let sauceQuestionShown = false
 
 function rollingPinAway() {
-   rollingPin.classList.add('rolling-pin-away')
+    soundManager.stopMusic('скалка')
+    rollingPin.style.left = newX +'px'
+    rollingPin.style.top = newY +'px'
+    rollingPin.style.transform = `scale(${scalePin}}) translate(${newX}px, ${newY}px)`
+    console.log(`translate(${newX}px, ${newY}px)`)
+    rollingPin.style.transition = 'none'
+    rollingPin.style.animation = 'rollAway 2s ease-out forwards'
    setTimeout(() => {
     clickMe.style.display = 'block'
     svg.setAttribute('id', 'svgClickMe')
@@ -137,25 +170,33 @@ function rollingPinAway() {
     text.setAttribute('width', 10)
     svg.appendChild(text)
     let i = 0;
+    soundManager.playSound('text', 0.5, true)
     const interval = setInterval(() => {
         text.textContent += textPickMe[i]
         i++
         if (i >= textPickMe.length) {
-        clearInterval(interval)
+            soundManager.stopMusic('text')
+            console.log('stoptext')
+            clearInterval(interval)
         }
     }, 100)
    }, 1000)
 }
 
-clickMe.addEventListener('click', (e) => {
+function clickMeSauce(e) {
+    soundManager.playSound('кнопка')
     document.body.classList.add('brush-cursor')
     clickMe.style.cursor = "url('images/cursor.png') 5 10, auto"
     dough.addEventListener('mouseover', applySauce)
     dough.addEventListener('touchstart', applySauce)
-})
+    dough.addEventListener('touchend', () => {soundManager.stopMusic('кликсоус')})
+}
+clickMe.addEventListener('click', clickMeSauce)
 
 
 function applySauce() {
+    console.log('dsvjv')
+    soundManager.playSound('кликсоус', 0.6, true)
     if (!sauceApllied) {
         dough.classList.add('rotating-cursor')
         handleMouseMove = (e) => {
@@ -187,7 +228,7 @@ function applySauce() {
         }
         dough.addEventListener('mousemove', handleMouseMove)
         dough.addEventListener('touchmove', handleMouseMove)
-
+        board.addEventListener('mouseleave', () => {console.log('mouseleave'); soundManager.stopMusic('кликсоус')})
     }
 }
 
@@ -218,7 +259,7 @@ function showSauceQuestion() {
         questionText.textContent += text[i]
         i++
         if (i >= text.length) {
-        clearInterval(interval)
+            clearInterval(interval)
         }
     }, 100)
 
@@ -249,7 +290,19 @@ function showSauceQuestion() {
     buttonText.textContent = 'Да';
     svg.appendChild(buttonText);
     yesButton.style.display = 'block'
-    yesButton.addEventListener('click', function() { yesButton.style.filter = 'none'; dough.removeEventListener('mouseover', applySauce);dough.removeEventListener('touchstart', applySauce); dough.removeEventListener('mousemove', handleMouseMove);dough.removeEventListener('touchmove',handleMouseMove); showMenu()})
+    const clickyesButton = () => {
+        console.log('отключаем mouseover')
+        soundManager.playSound('кнопка'); 
+        yesButton.style.filter = 'none';
+        clickMe.removeEventListener('click', clickMeSauce) 
+        dough.removeEventListener('mouseover', applySauce);
+        dough.removeEventListener('touchstart', applySauce); 
+        dough.removeEventListener('mousemove', handleMouseMove);
+        dough.removeEventListener('touchmove',handleMouseMove); 
+        showMenu()
+    }
+    buttonText.addEventListener('click', clickyesButton);
+    yesButton.addEventListener('click', clickyesButton);
 }
 
 const ingredientsMenu = document.getElementById('ingredients-menu')
@@ -295,12 +348,12 @@ function renderIngredientsMenu() {
             console.warm(`Ингредиент "${ingredientName}" найден в меню, но отсутствует в ingredientData.`)
             return
         }
-        item.addEventListener('click', () => {
+        const clickItem = () => {
             console.log('кликнули на ингредиент')
             if (ingredient) {
-                    ingredientImageElement = pizza.addIngredient(ingredient)
-                    ingredientImageElement.addEventListener('mousedown', startDrag)
-                    ingredientImageElement.addEventListener('touchstart', startDrag)
+                ingredientImageElement = pizza.addIngredient(ingredient)
+                ingredientImageElement.addEventListener('mousedown', startDrag)
+                ingredientImageElement.addEventListener('touchstart', startDrag)
                 if (ingredientImageElement) {
                     const onLoadHandler = () => {
                         const ingredientWidth = ingredientImageElement.offsetWidth
@@ -313,20 +366,26 @@ function renderIngredientsMenu() {
                         ingredientImageElement.style.top = `${centerY}px`;
                         ingredientImageElement.style.transform = `rotate(${randomAngle}deg)`
                         ingredientImageElement.style.visibility = 'visible'
+                        soundManager.playSound('ingredient')
                         console.log('Картинка видна на пицце')
                         ingredientImageElement.removeEventListener('load', onLoadHandler)
+                    }
+                    ingredientImageElement.onerror = () => {
+                        console.error(`Не удалось загрузить изображение :${selectedIngredientData.imageSrc}`)
+                        ingredientImageElement.remove()
+                    }
+                    ingredientImageElement.addEventListener('load', onLoadHandler)
                 }
-                ingredientImageElement.onerror = () => {
-                    console.error(`Не удалось загрузить изображение :${selectedIngredientData.imageSrc}`)
-                    ingredientImageElement.remove()
-                }
-                ingredientImageElement.addEventListener('load', onLoadHandler)
             }
         }
-    })
+    item.addEventListener('touchstart', clickItem)
+    item.addEventListener('click', clickItem)
 })
 }
-//function setupIngredientDrag(ingredientImageElement, ingredientName) {
+const pressDuration = 1500
+let longPressTimer = null
+let initialTouchPosition = null
+let isLongPressActive = false
     const startDrag = (e) => {
         e.preventDefault()
         if (pizza.isBaked === true) return
@@ -337,6 +396,22 @@ function renderIngredientsMenu() {
             dragIngredientX = e.touches[0].clientX - rect.left
             dragIngredientY = e.touches[0].clientY - rect.top
             console.log('touch')
+            longPressTimer = null;
+            if (!isLongPressActive && !longPressTimer) { 
+                initialTouchPosition = { x: e.touches[0].clientX, y: e.touches[0].clientY };
+                longPressTimer = setTimeout(() => {
+                    isLongPressActive = true; 
+                        
+                    console.log(`Долгое нажатие на ${ingredientImageElement.tagName} detected.`);
+                        
+                        
+                    pizza.removeIngredient(ingredientImageElement); 
+                    console.log(`Ингредиент удален (долгое нажатие): ${JSON.stringify(pizza.pizzaIngredients, null, 2)}`);
+                    soundManager.playSound('delete', 0.3); 
+                    initialTouchPosition = null
+                    isLongPressActive = false
+            }, pressDuration);
+        }
         } else {
             dragIngredientX = e.clientX - rect.left
             dragIngredientY = e.clientY - rect.top
@@ -347,6 +422,7 @@ function renderIngredientsMenu() {
         ingredientImageElement.style.zIndex = '100'
         draggableElementInfo = {element: ingredientImageElement, offset: offset,  ingredientName: ingredientName}
         document.addEventListener('touchend', dragIngredientEnd)
+        document.addEventListener('mouseup', dragIngredientEnd)
         
     }
 
@@ -355,17 +431,16 @@ document.addEventListener('keydown', (event) => {
     const {element} = draggableElementInfo
     if (event.key === 'Delete' && element) {
         event.preventDefault()
+        soundManager.playSound('delete', 0.3)
         pizza.removeIngredient(element)
         console.log(`Ингредиент удален ${JSON.stringify(pizza.pizzaIngredients, null, 2)}`)
     }
 })
 document.addEventListener('mousemove', dragIngredient)
 document.addEventListener('touchmove', dragIngredient)
-document.addEventListener('mouseup', dragIngredientEnd)
 
 function dragIngredient(e) {
     if (!draggableElementInfo) return
-   // e.preventDefault()
     console.log('touchmove')
     const {element} = draggableElementInfo
     const doughInnerRect = doughInner.getBoundingClientRect()
@@ -419,6 +494,8 @@ function dragIngredient(e) {
 function dragIngredientEnd(e) {
     e.preventDefault()
     if (draggableElementInfo) {
+        if (longPressTimer) {clearTimeout(longPressTimer)}
+        soundManager.playSound('ingredient')
         const {element} = draggableElementInfo
         element.style.cursor = 'grab'
         doughInner.style.cursor = 'default'
@@ -433,14 +510,21 @@ function showInfoPaper() {
     gameContainer.appendChild(paperInfo)
     const textContainer = document.createElement('p')
     textContainer.id = 'text-info'
-    const text = `Добавить ингредиент: Кликните на него в меню. Удалить ингредиент: Удерживайте его левой кнопкой мыши и нажмите Delete.`
+    let text
+    if (screenWidth <= 932) {
+        text = "Ваша кухня ждет! 🍕 Добавить: Кликните на ингредиент в меню. Удалить: Удерживайте, чтобы убрать. Испечь: Жмите на огонек, когда готовы!"
+    } else {
+        text = "Ваша кухня ждет! 🍕 Добавить: Кликните на ингредиент в меню. Удалить: Удерживайте его левой кнопкой мыши и нажмите Delete. Испечь: Жмите на огонек, когда готовы!"
+    }
     paperInfo.appendChild(textContainer)
     let i = 0;
+    soundManager.playSound('text', 0.2, true)
         const interval = setInterval(() => {
             textContainer.textContent += text[i]
             i++
              if (i >= text.length) {
-            clearInterval(interval)
+                soundManager.stopMusic('text')
+                clearInterval(interval)
             }
         }, 60)
      startAnimation('idle', 1500)
@@ -708,7 +792,9 @@ function animate() {
  let patt
  let ctxBake
  
- canvasButton.addEventListener('click', () => {
+ const clickCnavasButton = () => {
+    soundManager.stopMusic('text')
+    soundManager.playSound('bake', 0.7, true)
     ingredientsMenu.style.display = 'none'
     const paperInfo = document.getElementById('paper-info')
     paperInfo.style.display = 'none'
@@ -730,7 +816,9 @@ function animate() {
     img.src = 'images/печь.png'
     dough.style.animation = 'movePizza 3s ease-in-out forwards'
     setTimeout(pizzaBaked, 4000)
-})
+}
+canvasButton.addEventListener('click', clickCnavasButton)
+canvasButton.addEventListener('touchstart', clickCnavasButton) 
 let glow = {
     color: 'rgba(255, 119, 0, 0.34)',
     x: 0,
@@ -846,12 +934,14 @@ function startBakeAnimation(duration) {
 }
 const saveButton = document.getElementById('save-button')
 const updateButton = document.getElementById('update-button')
+const soundButton = document.getElementById('sound-button')
 function pizzaBaked() {
     pizza.bake()
     dough.style.animation = 'comeBackPizza 3s ease-in-out forwards'
     setTimeout(() => {
         canvasBake.style.animation = 'away 3s ease-out forwards'
         board.style.animation = 'toCenter 2s ease-out forwards'
+        soundManager.stopMusic('bake')
     }, 3000)
     setTimeout(() => {
         canvasBake.style.display = 'none'
@@ -887,7 +977,7 @@ function exportCanvasAsFile(canvas, filename = 'screenshot', fileType = 'image/p
         }
     });
 }
-saveButton.addEventListener('click', async () => {
+async function screenShot() {
     try {
         if (!board || !saveButton) {
             throw new Error("Не найдены необходимые DOM-элементы (pizza-container, board, save-button).");
@@ -899,9 +989,10 @@ saveButton.addEventListener('click', async () => {
             logging: true,
             ignoreElements: (element) => element.id === 'save-button' || element.tagName === 'BUTTON'
         })
+        console.log(`dough.offset:${dough.offsetWidth}`)
         const croppedCanvas = document.createElement('canvas');
-        croppedCanvas.width = 798
-        croppedCanvas.height = 798
+        croppedCanvas.width = dough.offsetWidth*1.99
+        croppedCanvas.height = dough.offsetWidth*1.99
         const context = croppedCanvas.getContext('2d')    
         context.drawImage(canvas, 0, 0, croppedCanvas.width, croppedCanvas.height, 0, 0, croppedCanvas.width, croppedCanvas.height)           
         console.log("Экспортируем скриншот...");
@@ -911,5 +1002,34 @@ saveButton.addEventListener('click', async () => {
     } catch {
         console.error("Не удалось сохранить пиццу:", error);
         alert("Произошла ошибка при сохранении пиццы. Попробуйте еще раз.")
+    }
+}
+const soundButtonclick = () => {
+    soundManager.toggleMasterMute()
+    if (soundManager.isMuted) {
+        console.log('звук выключен'); 
+        soundButton.title = 'Включить звук'
+        soundButton.textContent = '🔊'
+    } else {
+        console.log('звук включен')
+        soundButton.title = 'Выключить звук'
+        soundButton.textContent = '🔇'
+    }
+}
+const updateButtonclick = () => {
+    location.reload()
+}
+soundButton.addEventListener('touchend', (e) =>{e.preventDefault(); soundButtonclick()})
+soundButton.addEventListener('click', soundButtonclick)
+saveButton.addEventListener('touchstart', screenShot)
+saveButton.addEventListener('click', screenShot)
+updateButton.addEventListener('click', updateButtonclick)
+updateButton.addEventListener('touchstart', updateButtonclick)
+window.addEventListener('resize', () => {
+    const orientation = document.getElementById('check-orientation')
+    if (window.innerHeight > window.innerWidth) {
+        orientation.style.display = 'block'
+    } else {
+        orientation.style.display = 'none'
     }
 })

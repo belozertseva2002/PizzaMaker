@@ -8,6 +8,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
 </head>
 <body>
+    <div id="check-orientation"></div>
     <div id="game-container">
             <div id="board">
                 <img src="images/доска2.jpg" id="board-images" width="460" height="460">
@@ -16,7 +17,7 @@
                 </div>
             </div>
         <div id="rolling-pin">
-            <svg id="rolling-pin-svg" xmlns="http://www.w3.org/2000/svg" width="505" height="55">
+            <svg id="rolling-pin-svg" xmlns="http://www.w3.org/2000/svg" width="505" height="54">
                 <path id="svg_1" d="m424,22c0,-1.63014 1.36986,-3 3,-3l75,0c1.63014,0 3,1.36986 3,3l0,12c0,1.63014 -1.36986,3 -3,3l-75,0c-1.63014,0 -3,-1.36986 -3,-3l0,-12z"
                 opacity="undefined" stroke-width="0" stroke="#000" fill="#af7a48" />
                 <rect stroke="#000" stroke-width="0" rx="3" height="18" width="80" y="18.99998" x="0" fill="#af7a48" />
@@ -24,7 +25,7 @@
             </svg>
         </div>
         <div id="clickMe" class="hidden">
-            <img src="images/кетчуп3.png" alt="Нажми на меня" width="100" height="100">
+            <img src="images/кетчуп3.png" alt="Нажми на меня">
         </div>
         <div id="ingredients-menu" class="hidden">
             <div class="ingredient-group">
@@ -47,9 +48,9 @@
             </div>
         </div>
         <canvas id="buttonBake" width="120" height="170"></canvas>
-        <button id="save-button" type="button" title="Сохранить"></button>
-        <button id="sound-button" type="button" title="громкость"></button>
-        <button id="update-button" type="button" title="обновить"></button>
+        <button id="save-button" type="button" title="Сохранить" class="btn">&#128233;</button>
+        <button id="sound-button" type="button" title="Выключить звук" class="btn">&#128263;</button>
+        <button id="update-button" type="button" title="Обновить" class="btn">&#128257;</button>
     </div>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <script src="script.js" type="module"></script>
