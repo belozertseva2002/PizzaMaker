@@ -44,7 +44,6 @@ let originalFilter = rollingPin.style.filter
 let originalLeft = rollingPin.style.left
 let originalTop = rollingPin.style.top
 let scalePin = dough.offsetWidth*0.005
-//rollingPin.style.transform = `scale(${scalePin})`
 let pizza = new Pizza(doughInner)
 let draggableElementInfo = null
 let dragIngredientX
