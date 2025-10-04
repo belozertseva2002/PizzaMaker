@@ -959,9 +959,7 @@ async function screenShot() {
         croppedCanvas.height = dough.offsetWidth*1.99
         const context = croppedCanvas.getContext('2d')    
         context.drawImage(canvas, 0, 0, croppedCanvas.width, croppedCanvas.height, 0, 0, croppedCanvas.width, croppedCanvas.height)           
-        console.log("Экспортируем скриншот...");
         await exportCanvasAsFile(croppedCanvas, `pizza-${Date.now()}`, 'image/png');
-        console.log("Пицца успешно сохранена!");
         alert("Ваша пицца сохранена! 🍕");
     } catch {
         console.error("Не удалось сохранить пиццу:", error);
@@ -970,12 +968,10 @@ async function screenShot() {
 }
 const soundButtonclick = () => {
     soundManager.toggleMasterMute()
-    if (soundManager.isMuted) {
-        console.log('звук выключен'); 
+    if (soundManager.isMuted) { 
         soundButton.title = 'Включить звук'
         soundButton.textContent = '🔊'
     } else {
-        console.log('звук включен')
         soundButton.title = 'Выключить звук'
         soundButton.textContent = '🔇'
     }
