@@ -1000,8 +1000,8 @@ document.addEventListener('keydown', (event) => {
 })
 document.addEventListener('mousemove', dragIngredient)
 document.addEventListener('touchmove', dragIngredient)
+const orientation = document.getElementById('check-orientation')
 window.addEventListener('resize', () => {
-    const orientation = document.getElementById('check-orientation')
     if (window.innerHeight > window.innerWidth) {
         orientation.style.display = 'block'
     } else {
@@ -1018,6 +1018,9 @@ window.addEventListener('beforeunload', (event) => {
     return message; 
 })
 document.addEventListener('DOMContentLoaded', async () => {
+    if (window.innerHeight > window.innerWidth) {
+        orientation.style.display = 'block'
+    }
     console.log('DOM загружен.')
     try {
         rollingPin.style.transform = `scale(${scalePin})`
