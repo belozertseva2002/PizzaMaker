@@ -930,15 +930,15 @@ function exportCanvasAsFile(canvas, filename = 'screenshot', fileType = 'image/p
 }
 
 async function initializeGame() {
-    await soundManager.loadSound('/music/Del Rio Bravo.mp3', 'fon');
-    await soundManager.loadSound('/music/скалка.m4a', 'скалка');
-    await soundManager.loadSound('/music/кликсоус.m4a', 'кликсоус');
-    await soundManager.loadSound('/music/соуснапицце.m4a', 'соуснапицце');
-    await soundManager.loadSound('/music/кнопка.m4a', 'кнопка');
-    await soundManager.loadSound('/music/keyboard.m4a', 'text')
-    await soundManager.loadSound('/music/ингредиенты.m4a', 'ingredient')
-    await soundManager.loadSound('/music/печь.m4a', 'bake')
-    await soundManager.loadSound('/music/delete.m4a', 'delete')
+    await soundManager.loadSound('music/Del Rio Bravo.mp3', 'fon');
+    await soundManager.loadSound('music/скалка.m4a', 'скалка');
+    await soundManager.loadSound('music/кликсоус.m4a', 'кликсоус');
+    await soundManager.loadSound('music/соуснапицце.m4a', 'соуснапицце');
+    await soundManager.loadSound('music/кнопка.m4a', 'кнопка');
+    await soundManager.loadSound('music/keyboard.m4a', 'text')
+    await soundManager.loadSound('music/ингредиенты.m4a', 'ingredient')
+    await soundManager.loadSound('music/печь.m4a', 'bake')
+    await soundManager.loadSound('music/delete.m4a', 'delete')
     console.log('Аудио готово')
 }
 
