@@ -97,8 +97,7 @@ class SoundManager {
         source.start(0);
 
         this.musicSource = {source, gainNode}; 
-        this.currentMusicName = name
-        console.log(`Фоновая музыка "${name}" запущена.`);
+        this.currentMusicName = name;
     }
     stopMusic(name = null) {
         if (name) {
@@ -108,7 +107,6 @@ class SoundManager {
                 sfxData.source.disconnect();
                 if (sfxData.gainNode) sfxData.gainNode.disconnect();
                 delete this.activeSfx[name];
-                console.log(`SFX "${name}" остановлен.`);
             }
         } else {
             if (this.musicSource && this.musicSource.source) {
@@ -117,7 +115,6 @@ class SoundManager {
                 if (this.musicSource.gainNode) this.musicSource.gainNode.disconnect();
                 this.musicSource = null;
                 this.currentMusicName = null;
-                console.log('Фоновая музыка остановлена.');
             }
         }
     }
@@ -130,7 +127,6 @@ class SoundManager {
                 this.activeSfx[sfxName].gainNode.gain.value = volume;
             }
         }
-        console.log(`Мастер-громкость установлена на ${volume}.`);
     }
     toggleMasterMute() {
         this.isMuted = !this.isMuted; 
@@ -155,7 +151,6 @@ class SoundManager {
                 }
             } 
         }
-        console.log(`Система звука ${this.isMuted ? 'выключена (Muted)' : 'включена (Unmuted)'}.`);
     }
 }
 export const soundManager = new SoundManager()

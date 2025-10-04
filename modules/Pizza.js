@@ -11,13 +11,11 @@ class Pizza {
 
     addIngredient(ingredient) {
         if (!ingredient) {
-            console.log('Ингредиент недоступен!')
             return false
         }
         const ingredientImageElement = document.createElement('img')
         ingredientImageElement.src = ingredient.imageSrc
         ingredientImageElement.alt = ingredient.name
-        console.log(ingredientImageElement.alt)
         ingredientImageElement.classList.add('ingredient')
         ingredientImageElement.setAttribute('data-ingredient-name', ingredient.name)
         const uniqueId = `ingredient-${Date.now()}-${Math.random().toString(36).substring(2, 15)}`
@@ -44,7 +42,6 @@ class Pizza {
             element: ingredientImageElement,
             id: uniqueId,
         })
-        console.log(`Ингредиент "${ingredient.name}" добавлен на пиццу.`)
         return ingredientImageElement
     }
     removeIngredient(elementToRemove) {
@@ -53,7 +50,6 @@ class Pizza {
             const index = this.pizzaIngredients.findIndex(item => item.element === elementToRemove)
             if (index > -1) {
             this.pizzaIngredients.splice(index, 1); 
-            console.log(`Ингредиент ${elementToRemove.id} удален из массива pizzaIngredients.`);
         } else {
             console.warn(`Ингредиент ${elementToRemove.id} не найден в массиве pizzaIngredients.`);
         }
@@ -71,8 +67,17 @@ class Pizza {
             }
             item.element.style.cursor = 'default'
         })
-        console.log('Пицца готова!')
         this.isBaked = true  
+        this.savePizzaProgress()
+    }
+    savePizzaProgress() {
+        try {
+            const pizzaData = JSON.stringify(this.pizzaIngredients); 
+            localStorage.setItem('pizzaMakerProgress', pizzaData);
+            console.log('Прогресс пиццы сохранен локально.');
+        } catch (error) {
+            console.error('Ошибка при сохранении в localStorage:', error);
+        }
     }
 
 }
