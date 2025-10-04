@@ -48,7 +48,6 @@ class SoundManager {
         gainNode.gain.value = this.isMuted ? 0 : volume;
         
         if (loop && this.activeSfx[name]) {
-            console.warn(`SFX "${name}" уже играет. Остановка и перезапуск.`)
             this.stopMusic(name)
         }
 
@@ -80,7 +79,6 @@ class SoundManager {
 
         const buffer = this.sounds[name];
         if (!buffer) {
-            console.warn(`Фоновая музыка "${name}" не найдена.`);
             return;
         }
 
