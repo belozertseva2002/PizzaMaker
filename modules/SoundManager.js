@@ -14,7 +14,6 @@ class SoundManager {
     resumeContext() {
         if (this.audioContext.state === 'suspended') {
             this.audioContext.resume().then(() => {
-                console.log('AudioContext возобновлен.');
             });
         }
     }
